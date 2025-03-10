@@ -8,8 +8,73 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  username String @unique
+  id           Int         @id @default(autoincrement())
+  email        String      @unique
+  username     String      @unique
   passwordHash String
+  workspaces   Workspace[]
+  createdAt    DateTime    @default(now())
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Task {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  priority    TaskPriority?
+  completed   Boolean       @default(false)
+  attachments Attachment[]
+  subtasks    Subtask[]
+  taskList    TaskList      @relation(fields: [taskListId], references: [id])
+  taskListId  Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Subtask {
+  id        Int     @id @default(autoincrement())
+  title     String
+  completed Boolean @default(false)
+  task      Task    @relation(fields: [taskId], references: [id])
+  taskId    Int
+}
+
+model Attachment {
+  id       Int    @id @default(autoincrement())
+  fileName String
+  task     Task   @relation(fields: [taskId], references: [id])
+  taskId   Int
+}
+
+model TaskList {
+  id      Int    @id @default(autoincrement())
+  title   String
+  tasks   Task[]
+  board   Board  @relation(fields: [boardId], references: [id])
+  boardId Int
+}
+
+model Board {
+  id          Int        @id @default(autoincrement())
+  title       String
+  taskLists   TaskList[]
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Workspace {
+  id        Int      @id @default(autoincrement())
+  title     String
+  boards    Board[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
 }
