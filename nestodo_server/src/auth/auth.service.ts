@@ -38,12 +38,18 @@ export class AuthService {
   async register(user: RegisterRequestDto): Promise<AccessToken> {
     const existingUser = await this.userService.findByEmail(user.email);
     if (existingUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException('Email already taken');
     }
 
+    const existingUsername = await this.userService.findByUsername(user.username);
+    if (existingUsername) {
+      throw new BadRequestException('Username already taken');
+    }
+    
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const newUser = await this.userService.createUser({
       email: user.email,
+      username: user.username,
       passwordHash: hashedPassword
     });
     return await this.login({ id: newUser.id.toString(), email: newUser.email });
