@@ -13,6 +13,7 @@ interface AuthState {
 interface DecodedUser {
   sub: string;
   email: string;
+  username: string;
 }
 
 const decodeUser = (token: string) => {
@@ -20,6 +21,7 @@ const decodeUser = (token: string) => {
   return {
     id: parseInt(userInfo.sub),
     email: userInfo.email,
+    username: userInfo.username,
   }
 }
 

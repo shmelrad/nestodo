@@ -28,8 +28,8 @@ export class AuthService {
     return user;
   }
 
-  async login(user: { id: string; email: string }): Promise<AccessToken> {
-    const payload = { sub: user.id, email: user.email };
+  async login(user: { id: string; email: string; username: string }): Promise<AccessToken> {
+    const payload = { sub: user.id, email: user.email, username: user.username };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -52,6 +52,6 @@ export class AuthService {
       username: user.username,
       passwordHash: hashedPassword
     });
-    return await this.login({ id: newUser.id.toString(), email: newUser.email });
+    return await this.login({ id: newUser.id.toString(), email: newUser.email, username: newUser.username });
   }
 }
