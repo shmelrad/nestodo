@@ -6,22 +6,22 @@ import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class WorkspacesService {
-  constructor(private prisma: PrismaService, private userService: UsersService) {}
+  constructor(private prisma: PrismaService, private userService: UsersService) { }
 
   async create(createWorkspaceDto: CreateWorkspaceDto, userId: number) {
     const user = await this.userService.findById(userId);
-  
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
+
     const workspace = await this.prisma.workspace.create({
       data: {
         userId: user.id,
         ...createWorkspaceDto,
       },
     });
-  
+
     return workspace;
   }
 
@@ -32,7 +32,7 @@ export class WorkspacesService {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.workspace.findMany({ where: { userId: user.id } });
+    return this.prisma.workspace.findMany({ where: { userId: user.id }, include: { boards: true } });
   }
 
   async findOne(id: number) {
