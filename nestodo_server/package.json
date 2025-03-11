@@ -20,7 +20,11 @@
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate deploy",
     "migrate:test": "dotenv -e .env.test -- npx prisma migrate deploy",
-    "db:clear": "dotenv -e .env.development -- npx prisma db execute --file ./prisma/clear-db.sql"
+    "db:clear": "dotenv -e .env.development -- npx prisma db execute --file ./prisma/clear-db.sql",
+    "db:seed": "dotenv -e .env.development -- npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
