@@ -7,6 +7,12 @@ import { Toaster } from "@/components/ui/sonner"
 import AuthRoute from "@/components/AuthRoute"
 import { ThemeProvider } from "@/providers/ThemeProvider"
 import ProfilePage from "./pages/ProfilePage"
+import Dashboard from "./pages/dashboard/Dashboard"
+
+const protectedRoutes = [
+  { path: "/profile", element: <ProfilePage /> },
+  { path: "/dashboard", element: <Dashboard /> },
+]
 
 function App() {
   const queryClient = new QueryClient()
@@ -17,14 +23,17 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route
-              path="/profile"
-              element={
-                <AuthRoute>
-                  <ProfilePage />
-                </AuthRoute>
-              }
-            />
+            {protectedRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  <AuthRoute>
+                    {route.element}
+                  </AuthRoute>
+                }
+              />
+            ))}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>
