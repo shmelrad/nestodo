@@ -8,10 +8,12 @@ import AuthRoute from "@/components/AuthRoute"
 import { ThemeProvider } from "@/providers/ThemeProvider"
 import ProfilePage from "./pages/ProfilePage"
 import Dashboard from "./pages/dashboard/Dashboard"
+import CreatingFirstWorkspace from "./pages/dashboard/CreatingFirstWorkspace"
 
 const protectedRoutes = [
   { path: "/profile", element: <ProfilePage /> },
   { path: "/dashboard", element: <Dashboard /> },
+  { path: "/creating-first-workspace", element: <CreatingFirstWorkspace /> },
 ]
 
 function App() {
