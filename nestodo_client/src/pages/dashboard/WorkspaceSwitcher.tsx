@@ -16,7 +16,7 @@ import {
 import { Workspace } from "@/types/workspace"
 import { useWorkspaceStore } from "@/stores/workspaceStore"
 import { useEffect } from "react"
-import CreateWorkspaceDialog from "./CreateWorkspaceDialog"
+import CreateWorkspaceDialog from "./dialogs/CreateWorkspaceDialog"
 
 export type WorkspaceSwitcherProps = {
     workspaces: Workspace[]
