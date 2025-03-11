@@ -65,6 +65,19 @@ interface RequestConfig extends RequestInit {
       })
     }
 
+    protected patch<T>(endpoint: string, data?: unknown, config?: RequestConfig) {
+      return this.request<T>(endpoint, {
+        ...config,
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json', ...config?.headers },
+      })
+    }
+
+    protected delete<T>(endpoint: string, config?: RequestConfig) {
+      return this.request<T>(endpoint, { ...config, method: 'DELETE' })
+    }
+
     protected postFile<T>(endpoint: string, data?: FormData, config?: RequestConfig) {
       return this.request<T>(endpoint, {
         ...config,
