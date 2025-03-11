@@ -37,9 +37,8 @@ describe('AuthService', () => {
 
         service = module.get<AuthService>(AuthService);
         prisma = module.get<PrismaService>(PrismaService);
-    });
 
-    afterEach(async () => {
+        await prisma.workspace.deleteMany();
         await prisma.user.deleteMany();
     });
 
