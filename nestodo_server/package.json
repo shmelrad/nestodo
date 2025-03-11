@@ -21,7 +21,8 @@
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate deploy",
     "migrate:test": "dotenv -e .env.test -- npx prisma migrate deploy",
     "db:clear": "dotenv -e .env.development -- npx prisma db execute --file ./prisma/clear-db.sql",
-    "db:seed": "dotenv -e .env.development -- npx prisma db seed"
+    "db:seed": "dotenv -e .env.development -- npx prisma db seed",
+    "db:reset": "npm run db:clear && npm run db:seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
