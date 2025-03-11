@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
+import { useEffect } from "react";
 
 export default function Home() {
     const navigate = useNavigate();
     const { token } = useAuthStore();
-    if (token) {
-        navigate("/dashboard");
-    }
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
     return (
         <div className="flex flex-col items-center justify-center h-screen">
             <h1 className="text-6xl font-bold">nestodo</h1>
