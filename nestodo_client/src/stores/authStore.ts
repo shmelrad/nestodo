@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { jwtDecode } from "jwt-decode";
-import { User } from '@/types/user';
+import { JwtUser } from '@/types/jwtUser';
 
 interface AuthState {
   token: string | null
-  user: User | null
+  user: JwtUser | null
   login: (token: string) => void
   logout: () => void
-  updateUser: (user: User) => void
+  updateUser: (user: JwtUser) => void
 }
 
 interface DecodedUser {

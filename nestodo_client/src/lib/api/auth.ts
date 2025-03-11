@@ -1,4 +1,4 @@
-import { User } from '@/types/user';
+import { JwtUser } from '@/types/jwtUser';
 import { BaseApi } from './base'
 
 interface LoginRequestDto {
@@ -29,8 +29,8 @@ class AuthApi extends BaseApi {
     return this.post<LoginResponse>('/register', data)
   }
 
-  getProfile(): Promise<User> {
-    return this.get<User>('/profile', { auth: true })
+  getProfile(): Promise<JwtUser> {
+    return this.get<JwtUser>('/profile', { auth: true })
   }
 }
 
