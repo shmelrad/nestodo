@@ -4,13 +4,23 @@ import { DashboardHeader } from "./DashboardHeader";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 export default function DashboardPage() {
+    const navigate = useNavigate()
     const { selectedWorkspaceId } = useWorkspaceStore((state) => state)
     const { data: workspaces, isLoading } = useQuery({
         queryKey: ["workspaces"],
         queryFn: () => workspacesApi.getWorkspaces(),
     })
 
+    useEffect(() => {
+        if (!isLoading && workspaces?.length === 0) {
+            navigate("/creating-first-workspace")
+        }
+    }, [workspaces, navigate, isLoading]);
+    
     if (isLoading) {
         return <div>Loading...</div>
     }

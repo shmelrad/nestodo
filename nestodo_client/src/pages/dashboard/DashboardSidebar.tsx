@@ -15,8 +15,7 @@ import {
     SidebarRail,
     SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
 import { Workspace } from "@/types/workspace";
 import { CircleFadingPlus } from "lucide-react";
@@ -27,18 +26,10 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps) {
-    const navigate = useNavigate()
-
     const selectedWorkspaceId = useWorkspaceStore((state) => state.selectedWorkspaceId)
     const selectedWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId)
 
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
-
-    useEffect(() => {
-        if (workspaces.length === 0) {
-            navigate("/creating-first-workspace")
-        }
-    }, [workspaces, navigate]);
 
     return (
         <Sidebar

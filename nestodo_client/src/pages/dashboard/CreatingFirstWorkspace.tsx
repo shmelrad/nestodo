@@ -5,11 +5,12 @@ import { ApiError } from "@/lib/api/base"
 import { workspacesApi } from "@/lib/api/workspaces"
 import { displayApiError } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 const createWorkspaceSchema = z.object({
     title: z.string().min(1, "Title is required"),
 })
@@ -20,6 +21,17 @@ export default function CreatingFirstWorkspace() {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
+    const { data: workspaces, isLoading } = useQuery({
+        queryKey: ["workspaces"],
+        queryFn: () => workspacesApi.getWorkspaces(),
+    })
+
+    useEffect(() => {
+        if (!isLoading && workspaces && workspaces.length > 0) {
+            navigate("/dashboard")
+        }
+    }, [workspaces, navigate, isLoading])
+
     const form = useForm<CreateWorkspaceSchema>({
         resolver: zodResolver(createWorkspaceSchema),
         defaultValues: {
@@ -29,8 +41,8 @@ export default function CreatingFirstWorkspace() {
 
     const createWorkspaceMutation = useMutation({
         mutationFn: (data: CreateWorkspaceSchema) => workspacesApi.createWorkspace(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["workspaces"] })
+        onSuccess: async () => {
+            await queryClient.refetchQueries({ queryKey: ["workspaces"] });
             form.reset()
             toast.success("Workspace created successfully")
             navigate("/dashboard")
