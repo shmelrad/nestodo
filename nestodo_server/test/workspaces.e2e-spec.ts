@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '@/app.module';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AuthService } from '@/auth/auth.service';
+import { ValidationPipe } from '@nestjs/common';
 
 describe('Workspaces (e2e)', () => {
   let app: INestApplication;
@@ -17,12 +18,18 @@ describe('Workspaces (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     prisma = moduleFixture.get<PrismaService>(PrismaService);
     authService = moduleFixture.get<AuthService>(AuthService);
     await app.init();
   });
 
   beforeEach(async () => {
+    await prisma.attachment.deleteMany();
+    await prisma.subtask.deleteMany();
+    await prisma.task.deleteMany();
+    await prisma.taskList.deleteMany();
+    await prisma.board.deleteMany();
     await prisma.workspace.deleteMany();
     await prisma.user.deleteMany();
 
@@ -35,6 +42,11 @@ describe('Workspaces (e2e)', () => {
   });
 
   afterAll(async () => {
+    await prisma.attachment.deleteMany();
+    await prisma.subtask.deleteMany();
+    await prisma.task.deleteMany();
+    await prisma.taskList.deleteMany();
+    await prisma.board.deleteMany();
     await prisma.workspace.deleteMany();
     await prisma.user.deleteMany();
     await app.close();

@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { AppModule } from '../app.module';
 
 describe('AuthService', () => {
     let service: AuthService;
@@ -12,27 +10,7 @@ describe('AuthService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                AuthService,
-                UsersService,
-                PrismaService,
-                {
-                    provide: ConfigService,
-                    useValue: {
-                        get: jest.fn((key: string) => {
-                            if (key === 'JWT_SECRET') return 'test-secret';
-                            if (key === 'JWT_EXPIRATION_TIME') return '1h';
-                            return null;
-                        }),
-                    },
-                },
-                {
-                    provide: JwtService,
-                    useValue: {
-                        sign: jest.fn(() => 'test-token'),
-                    },
-                },
-            ],
+            imports: [AppModule],
         }).compile();
 
         service = module.get<AuthService>(AuthService);
@@ -53,7 +31,6 @@ describe('AuthService', () => {
             const result = await service.register(registerDto);
 
             expect(result).toHaveProperty('access_token');
-            expect(result.access_token).toBe('test-token');
 
             const user = await prisma.user.findUnique({
                 where: { email: registerDto.email }
