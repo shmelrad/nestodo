@@ -49,7 +49,6 @@ export function AddTaskList({ boardId }: AddTaskListProps) {
                     autoFocus
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    onBlur={handleSubmit}
                     placeholder="Enter list title..."
                     className="bg-muted/50"
                     disabled={createTaskListMutation.isPending}
