@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus, Trash } from "lucide-react"
+import { ChevronsUpDown, EllipsisVertical, Plus, Trash } from "lucide-react"
 import { useState } from "react"
 
 import {
@@ -89,24 +89,29 @@ export function WorkspaceSwitcher({
                         >
                             <p className="text-sm text-muted-foreground cursor-default mb-2">Your workspaces</p>
                             {workspaces.map((workspace) => (
-                                <div className="flex items-center">
+                                <div className="flex items-center" key={workspace.id}>
                                     <DropdownMenuCheckboxItem
-                                        key={workspace.id}
                                         checked={workspace.id === selectedWorkspaceId}
                                         onCheckedChange={() => setSelectedWorkspaceId(workspace.id)}
-                                        className="cursor-pointer flex-1 min-w-0"
+                                        className="flex-1 min-w-0"
                                     >
                                         <span className="truncate">{workspace.title}</span>
                                     </DropdownMenuCheckboxItem>
-                                    <Trash
-                                        className="flex-none ml-2 cursor-pointer hover:text-red-500 size-4"
-                                        onClick={() => handleDeleteWorkspace(workspace.id)}
-                                    />
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <EllipsisVertical className="hover:text-foreground/50 cursor-pointer" size={18}/>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem onSelect={() => handleDeleteWorkspace(workspace.id)}>
+                                                <Trash/>
+                                                Delete Workspace
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             ))}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                                className="cursor-pointer"
                                 onSelect={() => setCreateDialogOpen(true)}
                             >
                                 <Plus className="mr-2" />
