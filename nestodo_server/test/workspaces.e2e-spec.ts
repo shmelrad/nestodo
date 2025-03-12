@@ -19,18 +19,14 @@ describe('Workspaces (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
+
     prisma = moduleFixture.get<PrismaService>(PrismaService);
     authService = moduleFixture.get<AuthService>(AuthService);
+
     await app.init();
   });
 
   beforeEach(async () => {
-    await prisma.attachment.deleteMany();
-    await prisma.subtask.deleteMany();
-    await prisma.task.deleteMany();
-    await prisma.taskList.deleteMany();
-    await prisma.board.deleteMany();
-    await prisma.workspace.deleteMany();
     await prisma.user.deleteMany();
 
     const { access_token } = await authService.register({
@@ -42,12 +38,6 @@ describe('Workspaces (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.attachment.deleteMany();
-    await prisma.subtask.deleteMany();
-    await prisma.task.deleteMany();
-    await prisma.taskList.deleteMany();
-    await prisma.board.deleteMany();
-    await prisma.workspace.deleteMany();
     await prisma.user.deleteMany();
     await app.close();
   });

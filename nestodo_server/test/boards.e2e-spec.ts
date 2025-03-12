@@ -12,26 +12,26 @@ describe('Boards (e2e)', () => {
   let authToken: string;
   let workspaceId: number;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
-    await app.init();
 
     prisma = moduleFixture.get<PrismaService>(PrismaService);
     authService = moduleFixture.get<AuthService>(AuthService);
 
-    await prisma.board.deleteMany();
-    await prisma.workspace.deleteMany();
+    await app.init();
+  });
+
+  beforeEach(async () => {
     await prisma.user.deleteMany();
 
-    const uniqueId = Date.now();
     const registration = await authService.register({
-      email: `test${uniqueId}@example.com`,
-      username: `testuser${uniqueId}`,
+      email: `test@example.com`,
+      username: `testuser`,
       password: 'password123',
     });
     authToken = registration.access_token;
@@ -40,14 +40,13 @@ describe('Boards (e2e)', () => {
       .post('/workspaces')
       .set('Authorization', `Bearer ${authToken}`)
       .send({ title: 'Test Workspace' });
-    
+
     workspaceId = workspaceResponse.body.id;
   });
 
   afterAll(async () => {
-    await prisma.board.deleteMany();
-    await prisma.workspace.deleteMany();
     await prisma.user.deleteMany();
+
     await app.close();
   });
 
@@ -228,7 +227,7 @@ describe('Boards (e2e)', () => {
         .post('/workspaces')
         .set('Authorization', `Bearer ${otherUserAuthToken}`)
         .send({ title: 'Other User Workspace' });
-      
+
       otherUserWorkspaceId = workspaceResponse.body.id;
 
       const boardResponse = await request(app.getHttpServer())
@@ -238,7 +237,7 @@ describe('Boards (e2e)', () => {
           title: 'Other User Board',
           workspaceId: otherUserWorkspaceId,
         });
-      
+
       otherUserBoardId = boardResponse.body.id;
     });
 
