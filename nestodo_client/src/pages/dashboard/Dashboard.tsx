@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
     const navigate = useNavigate()
-    const { selectedWorkspaceId } = useWorkspaceStore((state) => state)
+    const { selectedWorkspaceId, getSelectedBoardId } = useWorkspaceStore((state) => state)
     const { data: workspaces, isLoading } = useQuery({
         queryKey: ["workspaces"],
         queryFn: () => workspacesApi.getWorkspaces(),
@@ -26,10 +26,14 @@ export default function DashboardPage() {
     }
 
     const selectedWorkspace = workspaces?.find((workspace) => workspace.id === selectedWorkspaceId)
+    const selectedBoard = selectedWorkspace?.boards.find((board) => 
+        board.id === (selectedWorkspaceId ? getSelectedBoardId(selectedWorkspaceId) : undefined)
+    )
+
 
     return (
         <SidebarProvider className="flex min-h-screen flex-col">
-            <DashboardHeader workspaceTitle={selectedWorkspace?.title || "Dashboard" } />
+            <DashboardHeader workspaceTitle={selectedWorkspace?.title || "Dashboard" } boardTitle={selectedBoard?.title}/>
             <div className="flex-1 flex">
                 <DashboardSidebar workspaces={workspaces!} />
                 <main className="flex-1">

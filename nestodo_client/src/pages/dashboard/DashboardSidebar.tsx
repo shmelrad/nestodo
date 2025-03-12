@@ -15,7 +15,7 @@ import {
     SidebarRail,
     SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
 import { Workspace } from "@/types/workspace";
 import { CircleFadingPlus } from "lucide-react";
@@ -26,10 +26,15 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps) {
-    const selectedWorkspaceId = useWorkspaceStore((state) => state.selectedWorkspaceId)
+    const { selectedWorkspaceId, getSelectedBoardId, setSelectedBoardId } = useWorkspaceStore((state) => state)
     const selectedWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId)
-
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
+
+    useEffect(() => {
+        if (selectedWorkspace?.boards.length && !getSelectedBoardId(selectedWorkspace.id)) {
+            setSelectedBoardId(selectedWorkspace.id, selectedWorkspace.boards[0].id)
+        }
+    }, [selectedWorkspace, getSelectedBoardId, setSelectedBoardId])
 
     return (
         <Sidebar
@@ -66,11 +71,14 @@ export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps
                         <SidebarMenu>
                             {selectedWorkspace?.boards.map((board) => (
                                 <SidebarMenuItem key={board.id}>
-                                    <SidebarMenuButton>
+                                    <SidebarMenuButton 
+                                        onClick={() => setSelectedBoardId(selectedWorkspace.id, board.id)}
+                                        className={getSelectedBoardId(selectedWorkspace.id) === board.id ? "bg-muted" : ""}
+                                    >
                                         <div className="flex aspect-square size-6 items-center justify-center rounded-sm bg-red-400 text-sidebar-primary-foreground">
                                             <p className="text-sm">{board.title.charAt(0)}</p>
                                         </div>
-                                        <a href={`/dashboard/${board.id}`}>{board.title}</a>
+                                        <span>{board.title}</span>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
