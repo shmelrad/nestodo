@@ -18,6 +18,10 @@ class WorkspacesApi extends BaseApi {
   getWorkspaces(): Promise<Workspace[]> {
     return this.get<Workspace[]>('/', { auth: true })
   }
+
+  deleteWorkspace(id: number): Promise<void> {
+    return this.delete<void>(`/${id}`, { auth: true })
+  }
 }
 
 export const workspacesApi = new WorkspacesApi() 

@@ -1,8 +1,9 @@
-import { Check, ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus, Trash } from "lucide-react"
 import { useState } from "react"
 
 import {
     DropdownMenu,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
@@ -17,6 +18,11 @@ import { Workspace } from "@/types/workspace"
 import { useWorkspaceStore } from "@/stores/workspaceStore"
 import { useEffect } from "react"
 import CreateWorkspaceDialog from "./dialogs/CreateWorkspaceDialog"
+import { displayApiError } from "@/lib/utils"
+import { ApiError } from "@/lib/api/base"
+import { toast } from "sonner"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { workspacesApi } from "@/lib/api/workspaces"
 
 export type WorkspaceSwitcherProps = {
     workspaces: Workspace[]
@@ -27,7 +33,19 @@ export function WorkspaceSwitcher({
     workspaces
 }: WorkspaceSwitcherProps) {
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
-    const {selectedWorkspaceId, setSelectedWorkspaceId} = useWorkspaceStore((state) => state)
+    const { selectedWorkspaceId, setSelectedWorkspaceId } = useWorkspaceStore((state) => state)
+    const queryClient = useQueryClient()
+
+    const deleteWorkspaceMutation = useMutation({
+        mutationFn: (workspaceId: number) => workspacesApi.deleteWorkspace(workspaceId),
+        onSuccess: async () => {
+            await queryClient.refetchQueries({ queryKey: ["workspaces"] });
+            toast.success("Workspace deleted successfully")
+        },
+        onError: (error: ApiError) => {
+            displayApiError("Failed to delete workspace", error)
+        },
+    })
 
     useEffect(() => {
         if (!selectedWorkspaceId) {
@@ -38,6 +56,14 @@ export function WorkspaceSwitcher({
     }, [workspaces, selectedWorkspaceId, setSelectedWorkspaceId])
 
     const selectedWorkspace = workspaces.find(workspace => workspace.id === selectedWorkspaceId);
+
+    const handleDeleteWorkspace = (workspaceId: number) => {
+        if (selectedWorkspaceId === workspaceId && workspaces.length > 1) {
+            setSelectedWorkspaceId(workspaces[0].id);
+        }
+        deleteWorkspaceMutation.mutate(workspaceId)
+    };
+
     return (
         <>
             <SidebarMenu>
@@ -58,22 +84,28 @@ export function WorkspaceSwitcher({
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                            className="min-w-54 p-3"
+                            className="min-w-54 max-w-72 p-3"
                             align="start"
                         >
                             <p className="text-sm text-muted-foreground cursor-default mb-2">Your workspaces</p>
                             {workspaces.map((workspace) => (
-                                <DropdownMenuItem
-                                    key={workspace.id}
-                                    onSelect={() => setSelectedWorkspaceId(workspace.id)}
-                                    className="cursor-pointer"
-                                >
-                                    {workspace.title}{" "}
-                                    {workspace.id === selectedWorkspaceId && <Check className="ml-auto" />}
-                                </DropdownMenuItem>
+                                <div className="flex items-center">
+                                    <DropdownMenuCheckboxItem
+                                        key={workspace.id}
+                                        checked={workspace.id === selectedWorkspaceId}
+                                        onCheckedChange={() => setSelectedWorkspaceId(workspace.id)}
+                                        className="cursor-pointer flex-1 min-w-0"
+                                    >
+                                        <span className="truncate">{workspace.title}</span>
+                                    </DropdownMenuCheckboxItem>
+                                    <Trash
+                                        className="flex-none ml-2 cursor-pointer hover:text-red-500 size-4"
+                                        onClick={() => handleDeleteWorkspace(workspace.id)}
+                                    />
+                                </div>
                             ))}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                                 className="cursor-pointer"
                                 onSelect={() => setCreateDialogOpen(true)}
                             >
@@ -84,9 +116,9 @@ export function WorkspaceSwitcher({
                     </DropdownMenu>
                 </SidebarMenuItem>
             </SidebarMenu>
-            
-            <CreateWorkspaceDialog 
-                open={createDialogOpen} 
+
+            <CreateWorkspaceDialog
+                open={createDialogOpen}
                 onOpenChange={setCreateDialogOpen}
             />
         </>
