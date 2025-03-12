@@ -6,9 +6,9 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { boardsApi } from "@/lib/api/boards";
 import { AddTaskList } from "./board/AddTaskList";
+import TaskList from "./board/TaskList";
 
 export default function DashboardPage() {
     const navigate = useNavigate()
@@ -40,39 +40,17 @@ export default function DashboardPage() {
     return (
         <SidebarProvider className="flex min-h-screen flex-col">
             <DashboardHeader workspaceTitle={selectedWorkspace?.title || "Dashboard"} boardTitle={selectedBoard?.title} />
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-x-auto">
                 <DashboardSidebar workspaces={workspaces!} />
-                <main className="flex-1 overflow-hidden">
-                    <div className="h-full p-6 flex flex-col">
-                        <div className="flex items-center gap-4 mb-6">
-                            <h2 className="text-2xl font-semibold">Task Lists</h2>
-                        </div>
-                        <ScrollArea className="flex-1 w-full h-full overflow-auto">
-                            <div className="flex gap-4 pb-4">
-                                {selectedBoard?.taskLists.map((taskList) => (
-                                    <div
-                                        key={taskList.id}
-                                        className="flex flex-1 w-64 bg-muted/50 rounded-lg p-4"
-                                    >
-                                        <h3 className="font-medium mb-4">{taskList.title}</h3>
-                                        <ScrollArea className="flex-1">
-                                            <div className="flex flex-col gap-2 pr-4">
-                                                {taskList.tasks.map((task) => (
-                                                    <div
-                                                        key={task.id}
-                                                        className="bg-background rounded-md p-3 shadow-sm"
-                                                    >
-                                                        <p>{task.title}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </ScrollArea>
-                                    </div>
-                                ))}
-                                <AddTaskList boardId={selectedBoardId || -1} />
-                            </div>
-                            <ScrollBar orientation="horizontal" />
-                        </ScrollArea>
+                <main className="p-6 flex flex-col h-[calc(100vh-var(--spacing)*14-20px)]">
+                    <div className="flex items-center gap-4 mb-6">
+                        <h2 className="text-2xl font-semibold">Task Lists</h2>
+                    </div>
+                    <div className="flex flex-1 min-h-0 w-full h-full items-start gap-4">
+                        {selectedBoard?.taskLists.map((taskList) => (
+                            <TaskList key={taskList.id} taskList={taskList} />
+                        ))}
+                        <AddTaskList boardId={selectedBoardId || -1} />
                     </div>
                 </main>
             </div>
