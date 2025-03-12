@@ -39,15 +39,35 @@ export class WorkspacesService {
     return this.prisma.workspace.findMany({ where: { userId: user.id }, include: { boards: true } });
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} workspace`;
+  async update(id: number, updateWorkspaceDto: UpdateWorkspaceDto, userId: number) {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const workspace = await this.prisma.workspace.findUnique({ where: { id, userId: user.id } });
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    return this.prisma.workspace.update({ where: { id, userId: user.id }, data: updateWorkspaceDto });
   }
 
-  async update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
-    return `This action updates a #${id} workspace`;
-  }
+  async remove(id: number, userId: number) {
+    const user = await this.userService.findById(userId);
 
-  async remove(id: number) {
-    return `This action removes a #${id} workspace`;
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const workspace = await this.prisma.workspace.findUnique({ where: { id, userId: user.id } });
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    return this.prisma.workspace.delete({ where: { id, userId: user.id } });
   }
 }
