@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model User {
   id           Int         @id @default(autoincrement())
   email        String      @unique
@@ -30,7 +32,7 @@ model Task {
   completed   Boolean       @default(false)
   attachments Attachment[]
   subtasks    Subtask[]
-  taskList    TaskList      @relation(fields: [taskListId], references: [id])
+  taskList    TaskList      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
   taskListId  Int
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -40,14 +42,14 @@ model Subtask {
   id        Int     @id @default(autoincrement())
   title     String
   completed Boolean @default(false)
-  task      Task    @relation(fields: [taskId], references: [id])
+  task      Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId    Int
 }
 
 model Attachment {
   id       Int    @id @default(autoincrement())
   fileName String
-  task     Task   @relation(fields: [taskId], references: [id])
+  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId   Int
 }
 
@@ -55,7 +57,7 @@ model TaskList {
   id      Int    @id @default(autoincrement())
   title   String
   tasks   Task[]
-  board   Board  @relation(fields: [boardId], references: [id])
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId Int
 }
 
@@ -63,7 +65,7 @@ model Board {
   id          Int        @id @default(autoincrement())
   title       String
   taskLists   TaskList[]
-  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId Int
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -75,6 +77,6 @@ model Workspace {
   boards    Board[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
