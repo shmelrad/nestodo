@@ -74,7 +74,7 @@ export function WorkspaceSwitcher({
                                 size="lg"
                                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                             >
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                <div className="flex aspect-square text-xl size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                                     <p>{selectedWorkspace?.title.charAt(0)}</p>
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
