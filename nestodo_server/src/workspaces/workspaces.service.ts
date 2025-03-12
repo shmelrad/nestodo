@@ -17,7 +17,11 @@ export class WorkspacesService {
 
     const workspace = await this.prisma.workspace.create({
       data: {
-        userId: user.id,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         ...createWorkspaceDto,
       },
     });
