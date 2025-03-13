@@ -2,18 +2,55 @@ import { Task } from "@/types/task"
 import { TaskList as TaskListType } from "@/types/taskList"
 import { AddTask } from "./AddTask"
 import { Separator } from "@/components/ui/separator"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { EllipsisVertical, Trash } from "lucide-react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { ApiError } from "@/lib/api/base"
+import { toast } from "sonner"
+import { displayApiError } from "@/lib/utils"
+import { taskListsApi } from "@/lib/api/taskLists"
 
 interface TaskListProps {
     taskList: TaskListType
 }
 
 export default function TaskList({ taskList }: TaskListProps) {
+    const queryClient = useQueryClient()
+
+    const deleteTaskListMutation = useMutation({
+        mutationFn: (taskListId: number) => taskListsApi.deleteTaskList(taskListId),
+        onSuccess: async () => {
+            queryClient.invalidateQueries({ queryKey: ["board", taskList.boardId] })
+            toast.success("Task list deleted successfully")
+        },
+        onError: (error: ApiError) => {
+            displayApiError("Failed to delete board", error)
+        },
+    })
+    
+    const handleDeleteTaskList = () => {
+        deleteTaskListMutation.mutate(taskList.id)
+    }
+
     return (
         <div
             key={taskList.id}
             className="flex flex-col max-h-full w-64 border border-border rounded-lg p-2"
         >
-            <h3 className="font-bold mb-4 px-2">{taskList.title}</h3>
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="font-bold px-2">{taskList.title}</h3>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => handleDeleteTaskList(taskList.id)}>
+                            <Trash />
+                            Delete Task List
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
             <div className="flex flex-col gap-2 mb-2 flex-[0_1_auto] overflow-y-auto">
                 {taskList.tasks.map((task) => (
                     <TaskCard key={task.id} task={task} />
