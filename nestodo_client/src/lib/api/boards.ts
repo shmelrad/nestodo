@@ -30,6 +30,10 @@ class BoardsApi extends BaseApi {
   deleteBoard(id: number): Promise<void> {
     return this.delete<void>(`/${id}`, { auth: true })
   }
+
+  reorderTaskLists(boardId: number, taskListIds: number[]): Promise<Board> {
+    return this.patch<Board>(`/${boardId}/reorder-task-lists`, { taskListIds }, { auth: true })
+  }
 }
 
 export const boardsApi = new BoardsApi()

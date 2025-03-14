@@ -3,12 +3,15 @@ import { TaskList as TaskListType } from "@/types/taskList"
 import { AddTask } from "./AddTask"
 import { Separator } from "@/components/ui/separator"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { EllipsisVertical, Trash } from "lucide-react"
+import { EllipsisVertical, GripVertical, Trash } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ApiError } from "@/lib/api/base"
 import { toast } from "sonner"
 import { displayApiError } from "@/lib/utils"
 import { taskListsApi } from "@/lib/api/taskLists"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { cn } from "@/lib/utils"
 
 interface TaskListProps {
     taskList: TaskListType
@@ -16,6 +19,26 @@ interface TaskListProps {
 
 export default function TaskList({ taskList }: TaskListProps) {
     const queryClient = useQueryClient()
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({
+        id: taskList.id,
+        data: {
+            type: "taskList",
+            taskList
+        }
+    })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    }
 
     const deleteTaskListMutation = useMutation({
         mutationFn: (taskListId: number) => taskListsApi.deleteTaskList(taskListId),
@@ -34,11 +57,25 @@ export default function TaskList({ taskList }: TaskListProps) {
 
     return (
         <div
+            ref={setNodeRef}
+            style={style}
             key={taskList.id}
-            className="flex flex-col max-h-full w-64 border border-border rounded-lg p-2"
+            className={cn(
+                "flex flex-col max-h-full w-64 border border-border rounded-lg p-2",
+                isDragging && "opacity-50 z-10"
+            )}
         >
             <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold px-2">{taskList.title}</h3>
+                <div className="flex items-center gap-2">
+                    <div 
+                        {...attributes} 
+                        {...listeners}
+                        className="cursor-grab hover:text-foreground/70 touch-none"
+                    >
+                        <GripVertical size={18} />
+                    </div>
+                    <h3 className="font-bold">{taskList.title}</h3>
+                </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
