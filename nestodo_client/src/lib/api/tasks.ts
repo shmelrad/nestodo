@@ -6,6 +6,18 @@ interface CreateTaskRequestDto {
   taskListId: number
 }
 
+interface UpdateTaskRequestDto {
+  title?: string
+  description?: string
+  completed?: boolean
+}
+
+interface MoveTaskRequestDto {
+  sourceTaskListId: number
+  destinationTaskListId: number
+  newPosition: number
+}
+
 class TasksApi extends BaseApi {
   constructor() {
     super('/api/tasks')
@@ -15,12 +27,16 @@ class TasksApi extends BaseApi {
     return this.post<Task>('/', data, { auth: true })
   }
 
-  updateTask(id: number, data: { title: string }): Promise<Task> {
+  updateTask(id: number, data: UpdateTaskRequestDto): Promise<Task> {
     return this.patch<Task>(`/${id}`, data, { auth: true })
   }
 
-  deleteTaskList(id: number): Promise<void> {
+  deleteTask(id: number): Promise<void> {
     return this.delete<void>(`/${id}`, { auth: true })
+  }
+
+  moveTask(id: number, data: MoveTaskRequestDto): Promise<Task> {
+    return this.patch<Task>(`/${id}/move`, data, { auth: true })
   }
 }
 

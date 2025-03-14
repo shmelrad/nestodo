@@ -2,6 +2,7 @@ import { Controller, Post, Body, Patch, Param, Delete, Request, UseGuards } from
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { MoveTaskDto } from './dto/move-task.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -17,6 +18,11 @@ export class TasksController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto, @Request() req) {
     return this.tasksService.update(+id, updateTaskDto, +req.user.sub);
+  }
+
+  @Patch(':id/move')
+  move(@Param('id') id: string, @Body() moveTaskDto: MoveTaskDto, @Request() req) {
+    return this.tasksService.moveTask(+id, moveTaskDto, +req.user.sub);
   }
 
   @Delete(':id')
