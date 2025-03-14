@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request }
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import { ReorderTaskListsDto } from './dto/reorder-task-lists.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -22,6 +23,15 @@ export class BoardsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto, @Request() req) {
     return this.boardsService.update(+id, updateBoardDto, +req.user.sub);
+  }
+
+  @Patch(':id/reorder-task-lists')
+  reorderTaskLists(
+    @Param('id') id: string, 
+    @Body() reorderTaskListsDto: ReorderTaskListsDto, 
+    @Request() req
+  ) {
+    return this.boardsService.reorderTaskLists(+id, reorderTaskListsDto, +req.user.sub);
   }
 
   @Delete(':id')
