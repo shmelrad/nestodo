@@ -44,7 +44,7 @@ export default function TaskList({ taskList }: TaskListProps) {
                         <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => handleDeleteTaskList(taskList.id)}>
+                        <DropdownMenuItem onSelect={() => handleDeleteTaskList()}>
                             <Trash />
                             Delete Task List
                         </DropdownMenuItem>
