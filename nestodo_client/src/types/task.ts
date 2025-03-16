@@ -11,8 +11,9 @@ export interface Task {
     subtasks: Subtask[]
     taskList: TaskList
     taskListId: number
-    createdAt: Date
-    updatedAt: Date
+    createdAt: string
+    updatedAt: string
+    position: number
 }
 
 export enum TaskPriority {
