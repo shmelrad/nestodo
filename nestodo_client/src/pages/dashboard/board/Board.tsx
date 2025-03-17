@@ -236,11 +236,6 @@ export default function Board({ boardId }: BoardProps) {
         <main className="p-6 flex flex-col h-[calc(100vh-var(--spacing)*14-20px)]">
             <div className="flex items-center gap-4 mb-6">
                 <h2 className="text-2xl font-semibold">Task Lists</h2>
-                <Button variant="outline" onClick={() => {
-                    console.log('board.taskLists', board.taskLists)
-                }}>
-                    Print tasklists
-                </Button>
             </div>
             <DndContext
                 sensors={sensors}
