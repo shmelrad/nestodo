@@ -85,7 +85,6 @@ export default function Board({ boardId }: BoardProps) {
     if (!board) return null
 
     const handleDragStart = (event: DragStartEvent) => {
-        console.log('drag start')
         if (event.active.data.current?.type === 'taskList') {
             setActiveTaskList(event.active.data.current.taskList)
         }
@@ -151,7 +150,6 @@ export default function Board({ boardId }: BoardProps) {
     }
 
     const handleDragOver = (event: DragOverEvent) => {
-        console.log('drag over', event)
         const { active, over } = event
         if (!over) return
 
@@ -220,7 +218,6 @@ export default function Board({ boardId }: BoardProps) {
             
             // Insert task at the new position in target list
             newTaskLists[targetTaskListIndex].tasks.splice(insertPosition, 0, removedTask);
-            console.log('newTaskLists', newTaskLists)
 
             // Return updated board
             return {

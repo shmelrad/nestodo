@@ -53,7 +53,6 @@ export default function LoginPage() {
     mutationFn: (data: LoginSchema) => authApi.login(data),
     onSuccess: ({ access_token }: LoginResponse) => {
       login(access_token)
-      console.log("Logged in successfully")
       navigate("/")
       toast.success("Logged in successfully")
     },
