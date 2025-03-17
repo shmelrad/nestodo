@@ -57,7 +57,11 @@ export class BoardsService {
             position: 'asc',
           },
           include: {
-            tasks: true,
+            tasks: {
+              orderBy: {
+                position: 'asc',
+              },
+            },
           },
         },
       },
