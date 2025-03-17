@@ -14,6 +14,7 @@ import { createPortal } from "react-dom"
 import TaskCard from "./TaskCard"
 import { Board as BoardType } from "@/types/board"
 import { tasksApi } from "@/lib/api/tasks"
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers"
 interface BoardProps {
     boardId: number
 }
@@ -253,7 +254,7 @@ export default function Board({ boardId }: BoardProps) {
                     <AddTaskList boardId={boardId} />
                 </div>
                 {createPortal(
-                    <DragOverlay>
+                    <DragOverlay modifiers={activeTaskList ? [restrictToHorizontalAxis] : []}>
                         {
                             activeTaskList &&
                             <TaskList taskList={activeTaskList} />
