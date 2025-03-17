@@ -67,6 +67,7 @@ export function AddTask({ taskListId, boardId }: AddTaskProps) {
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter task title..."
                     className="bg-muted/50"
+                    onBlur={() => setIsEditing(false)}
                     disabled={createTaskMutation.isPending}
                 />
             </form>
