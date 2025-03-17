@@ -13,7 +13,6 @@ import { useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import TaskCard from "./TaskCard"
 import { Board as BoardType } from "@/types/board"
-import { Button } from "@/components/ui/button"
 import { tasksApi } from "@/lib/api/tasks"
 interface BoardProps {
     boardId: number
