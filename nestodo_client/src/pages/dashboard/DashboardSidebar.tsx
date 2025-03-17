@@ -26,6 +26,7 @@ import { boardsApi } from "@/lib/api/boards";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api/base";
 import { displayApiError } from "@/lib/utils";
+import { Board } from "@/types/board";
 
 interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
     workspaces: Workspace[]
@@ -59,7 +60,7 @@ export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps
             displayApiError("Failed to delete board", error)
         },
     })
-    
+
     useEffect(() => {
         if (selectedWorkspace?.boards.length && !getSelectedBoardId(selectedWorkspace.id)) {
             setSelectedBoardId(selectedWorkspace.id, selectedWorkspace.boards[0].id)
@@ -107,28 +108,14 @@ export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {selectedWorkspace?.boards.map((board) => (
-                                <SidebarMenuItem key={board.id}>
-                                    <SidebarMenuButton
-                                        onClick={() => setSelectedBoardId(selectedWorkspace.id, board.id)}
-                                        className={getSelectedBoardId(selectedWorkspace.id) === board.id ? "bg-muted" : ""}
-                                    >
-                                        <div className="flex aspect-square size-6 items-center justify-center rounded-sm bg-red-400 text-sidebar-primary-foreground">
-                                            <p className="text-sm">{board.title.charAt(0)}</p>
-                                        </div>
-                                        <span className="truncate">{board.title}</span>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuItem onSelect={() => handleDeleteBoard(board.id)}>
-                                                    <Trash />
-                                                    Delete Board
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
+                                <BoardSidebarMenuItem
+                                    key={board.id}
+                                    board={board}
+                                    selectedWorkspaceId={selectedWorkspace.id}
+                                    getSelectedBoardId={getSelectedBoardId}
+                                    setSelectedBoardId={setSelectedBoardId}
+                                    handleDeleteBoard={handleDeleteBoard}
+                                />
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
@@ -141,5 +128,45 @@ export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps
                 workspaceId={selectedWorkspaceId!}
             />
         </Sidebar>
+    )
+}
+
+interface BoardSidebarMenuItemProps {
+    board: Board
+    selectedWorkspaceId: number
+    getSelectedBoardId: (workspaceId: number) => number | undefined
+    setSelectedBoardId: (workspaceId: number, boardId: number) => void
+    handleDeleteBoard: (boardId: number) => void
+}
+
+const BoardSidebarMenuItem = ({ board, selectedWorkspaceId, getSelectedBoardId, setSelectedBoardId, handleDeleteBoard }: BoardSidebarMenuItemProps) => {
+    const [isMouseOver, setIsMouseOver] = useState(false)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const isSelected = getSelectedBoardId(selectedWorkspaceId) === board.id
+    return (
+        <SidebarMenuItem key={board.id}>
+            <SidebarMenuButton
+                onClick={() => setSelectedBoardId(selectedWorkspaceId, board.id)}
+                className={isSelected ? "bg-muted" : ""}
+                onMouseEnter={() => setIsMouseOver(true)}
+                onMouseLeave={() => setIsMouseOver(false)}
+            >
+                <div className="flex aspect-square size-6 items-center justify-center rounded-sm bg-red-400 text-sidebar-primary-foreground">
+                    <p className="text-sm">{board.title.charAt(0)}</p>
+                </div>
+                <span className="truncate">{board.title}</span>
+                <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <EllipsisVertical className={`ml-auto hover:text-foreground/50 cursor-pointer ${isMouseOver || isDropdownOpen || isSelected ? "visible" : "invisible"}`} size={18} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => handleDeleteBoard(board.id)}>
+                            <Trash />
+                            Delete Board
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </SidebarMenuButton>
+        </SidebarMenuItem>
     )
 }
