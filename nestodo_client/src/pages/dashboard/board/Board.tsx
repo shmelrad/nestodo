@@ -15,18 +15,12 @@ import TaskCard from "./TaskCard"
 import { Board as BoardType } from "@/types/board"
 import { tasksApi } from "@/lib/api/tasks"
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { Filter } from "lucide-react"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
+import { BoardFilter, FilterOption } from "./BoardFilter"
 
 interface BoardProps {
     boardId: number
 }
 
-type FilterOption = "all" | "complete" | "incomplete";
 
 export default function Board({ boardId }: BoardProps) {
     const [activeTaskList, setActiveTaskList] = useState<TaskListType | null>(null)
@@ -35,7 +29,6 @@ export default function Board({ boardId }: BoardProps) {
         taskId: number,
         sourceTaskListId: number
     } | null>(null)
-    const [filterOpen, setFilterOpen] = useState(false)
     const [filter, setFilter] = useState<FilterOption>("all")
 
     const queryClient = useQueryClient()
@@ -94,22 +87,20 @@ export default function Board({ boardId }: BoardProps) {
 
     const filteredTaskLists = useMemo(() => {
         if (!board) return []
-        
+
         return board.taskLists.map(taskList => {
             const filteredTasks = taskList.tasks.filter(task => {
                 if (filter === "complete") return task.completed;
                 if (filter === "incomplete") return !task.completed;
                 return true;
             })
-            
+
             return {
                 ...taskList,
                 tasks: filteredTasks
             }
         })
     }, [board, filter])
-
-    const isFilterActive = filter !== "all";
 
     if (!board) return null
 
@@ -253,60 +244,15 @@ export default function Board({ boardId }: BoardProps) {
         })
     }
 
-    const clearFilters = () => {
-        setFilter("all");
-    }
-
     return (
         <main className="p-6 flex flex-col h-[calc(100vh-var(--spacing)*14-20px)]">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold">Task Lists</h2>
-                <div className="flex items-center gap-2">
-                    <Popover open={filterOpen} onOpenChange={setFilterOpen}>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 gap-1">
-                                <Filter className="h-4 w-4" />
-                                Filters
-                                {isFilterActive && (
-                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                                        1
-                                    </span>
-                                )}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-56 p-3" align="end">
-                            <div className="flex items-center justify-between mb-2">
-                                <h3 className="font-medium text-sm">Filter</h3>
-                                <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className="h-7 px-2 text-xs" 
-                                    onClick={clearFilters}
-                                >
-                                    Clear all
-                                </Button>
-                            </div>
-                            <Separator className="my-2" />
-                            <div className="space-y-2">
-                                <h4 className="text-sm font-medium mb-1">Card status</h4>
-                                <RadioGroup value={filter} onValueChange={(val: string) => setFilter(val as FilterOption)}>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem id="all-tasks" value="all" />
-                                        <Label htmlFor="all-tasks" className="text-sm">All tasks</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem id="marked-complete" value="complete" />
-                                        <Label htmlFor="marked-complete" className="text-sm">Marked as complete</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem id="not-marked-complete" value="incomplete" />
-                                        <Label htmlFor="not-marked-complete" className="text-sm">Not marked as complete</Label>
-                                    </div>
-                                </RadioGroup>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                </div>
+                <BoardFilter
+                    filter={filter}
+                    setFilter={setFilter}
+                    isFilterActive={filter !== "all"}
+                />
             </div>
             <DndContext
                 sensors={sensors}
