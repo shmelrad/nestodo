@@ -2,7 +2,7 @@ import { TaskList as TaskListType } from "@/types/taskList"
 import { AddTask } from "./AddTask"
 import { Separator } from "@/components/ui/separator"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { EllipsisVertical, GripVertical, Trash } from "lucide-react"
+import { EllipsisVertical, GripVertical, Pencil, Trash } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ApiError } from "@/lib/api/base"
 import { toast } from "sonner"
@@ -11,12 +11,15 @@ import { taskListsApi } from "@/lib/api/taskLists"
 import TaskCard from "./TaskCard"
 import { SortableContext, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import EditTaskListDialog from "@/pages/dashboard/dialogs/EditTaskListDialog"
+
 interface TaskListProps {
     taskList: TaskListType
 }
 
 export default function TaskList({ taskList }: TaskListProps) {
+    const [editDialogOpen, setEditDialogOpen] = useState(false)
     const tasksIds = useMemo(() => {
         return taskList.tasks.map(task => `${task.id}`)
     }, [taskList])
@@ -63,7 +66,6 @@ export default function TaskList({ taskList }: TaskListProps) {
                     <div
                         {...attributes}
                         {...listeners}
-
                         className="cursor-grab hover:text-foreground/70 touch-none"
                     >
                         <GripVertical size={18} />
@@ -75,8 +77,12 @@ export default function TaskList({ taskList }: TaskListProps) {
                         <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => setEditDialogOpen(true)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit Task List
+                        </DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => handleDeleteTaskList()}>
-                            <Trash />
+                            <Trash className="mr-2 h-4 w-4" />
                             Delete Task List
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -91,6 +97,14 @@ export default function TaskList({ taskList }: TaskListProps) {
             </div>
             <Separator className="my-2" />
             <AddTask taskListId={taskList.id} boardId={taskList.boardId} />
+            
+            <EditTaskListDialog
+                open={editDialogOpen}
+                onOpenChange={setEditDialogOpen}
+                taskListId={taskList.id}
+                boardId={taskList.boardId}
+                currentTitle={taskList.title}
+            />
         </div>
     )
 }
