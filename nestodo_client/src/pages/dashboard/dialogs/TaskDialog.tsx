@@ -3,6 +3,7 @@ import {
     Dialog,
     DialogContent,
     DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -82,18 +83,20 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="min-w-xl max-w-6xl">
                 <DialogHeader>
-                    <form onSubmit={handleTitleSubmit}>
-                        <textarea
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="text-lg md:text-xl h-8 focus:h-auto font-semibold mb-2 resize-none w-full outline-none focus:border border-border focus:bg-muted/50 rounded-md px-1"
-                            onBlur={handleTitleSubmit}
-                            onKeyDown={handleKeyDown}
-                            disabled={updateTaskMutation.isPending}
-                        />
-                    </form>
+                    <DialogTitle>
+                        <form onSubmit={handleTitleSubmit}>
+                            <textarea
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="text-lg md:text-xl h-8 focus:h-auto font-semibold mb-2 resize-none w-full outline-none focus:border border-border focus:bg-muted/50 rounded-md px-1"
+                                onBlur={handleTitleSubmit}
+                                onKeyDown={handleKeyDown}
+                                disabled={updateTaskMutation.isPending}
+                            />
+                        </form>
+                    </DialogTitle>
                 </DialogHeader>
-
+                
                 <div className="flex gap-8">
                     <div className="flex-1 rounded-md">
                         <div className="mb-6">
@@ -111,8 +114,8 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
 
                     <div className="flex flex-col gap-1">
                         <h3 className="text-sm font-semibold">Actions</h3>
-                        <Button 
-                            variant="ghost" 
+                        <Button
+                            variant="ghost"
                             className="w-full justify-start text-muted-foreground"
                             onClick={handleDelete}
                             disabled={deleteTaskMutation.isPending}
