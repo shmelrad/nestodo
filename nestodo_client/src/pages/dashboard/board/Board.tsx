@@ -60,28 +60,28 @@ export default function Board({ boardId }: BoardProps) {
     })
 
     const moveTaskMutation = useMutation({
-        mutationFn: (params: { 
-          taskId: number, 
-          sourceTaskListId: number, 
-          destinationTaskListId: number, 
-          newPosition: number 
+        mutationFn: (params: {
+            taskId: number,
+            sourceTaskListId: number,
+            destinationTaskListId: number,
+            newPosition: number
         }) => {
-          return tasksApi.moveTask(params.taskId, {
-            sourceTaskListId: params.sourceTaskListId,
-            destinationTaskListId: params.destinationTaskListId,
-            newPosition: params.newPosition
-          })
+            return tasksApi.moveTask(params.taskId, {
+                sourceTaskListId: params.sourceTaskListId,
+                destinationTaskListId: params.destinationTaskListId,
+                newPosition: params.newPosition
+            })
         },
         onSuccess: () => {
-          toast.success("Task moved successfully")
+            toast.success("Task moved successfully")
         },
         onError: (error: ApiError) => {
-          displayApiError("Failed to move task", error)
-          queryClient.invalidateQueries({ queryKey: ["board", boardId] })
+            displayApiError("Failed to move task", error)
+            queryClient.invalidateQueries({ queryKey: ["board", boardId] })
         }
-      })
+    })
 
-      
+
     if (!board) return null
 
     const handleDragStart = (event: DragStartEvent) => {
@@ -91,7 +91,7 @@ export default function Board({ boardId }: BoardProps) {
         else if (event.active.data.current?.type === 'task') {
             const task = event.active.data.current.task
             setActiveTask(task)
-            
+
             // Store initial position
             setInitialTaskPosition({
                 taskId: task.id,
@@ -102,7 +102,7 @@ export default function Board({ boardId }: BoardProps) {
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event
-        
+
         // Handle task list reordering
         if (active.data.current?.type === 'taskList' && over && active.id !== over.id) {
             const oldIndex = board.taskLists.findIndex(list => list.id === active.id)
@@ -117,10 +117,10 @@ export default function Board({ boardId }: BoardProps) {
                 reorderTaskListsMutation.mutate(newTaskLists)
             }
         }
-        
+
         if (initialTaskPosition && over && active.data.current?.type === 'task') {
             let destinationTaskListId: number
-            
+
             if (over.data.current?.type === 'task') {
                 destinationTaskListId = over.data.current.task.taskListId
             } else if (over.data.current?.type === 'taskList') {
@@ -128,22 +128,20 @@ export default function Board({ boardId }: BoardProps) {
             } else {
                 return
             }
-            
+
             const destList = board.taskLists.find(list => list.id === destinationTaskListId)
             if (!destList) return
-            
+
             const newPosition = destList.tasks.findIndex(t => t.id === initialTaskPosition.taskId)
-            
-            if (initialTaskPosition.sourceTaskListId !== destinationTaskListId) {
-                moveTaskMutation.mutate({
-                    taskId: initialTaskPosition.taskId,
-                    sourceTaskListId: initialTaskPosition.sourceTaskListId,
-                    destinationTaskListId,
-                    newPosition: newPosition !== -1 ? newPosition : 0
-                })
-            }
+
+            moveTaskMutation.mutate({
+                taskId: initialTaskPosition.taskId,
+                sourceTaskListId: initialTaskPosition.sourceTaskListId,
+                destinationTaskListId,
+                newPosition: newPosition !== -1 ? newPosition : 0
+            })
         }
-        
+
         setActiveTaskList(null)
         setActiveTask(null)
         setInitialTaskPosition(null)
@@ -165,18 +163,18 @@ export default function Board({ boardId }: BoardProps) {
         const sourceTaskList = board.taskLists.find(list => list.id === activeTask.taskListId)
         const targetTaskListId = isOverTask ? over.data.current?.task.taskListId : over.data.current?.taskList.id
         const targetTaskList = board.taskLists.find(list => list.id === targetTaskListId)
-        
+
 
         if (!sourceTaskList || !targetTaskList) return
-        
+
         queryClient.setQueryData(["board", boardId], (oldData: BoardType) => {
             // Create a deep copy of task lists to avoid direct state mutation
             const newTaskLists = structuredClone(oldData.taskLists);
-            
+
             // Find indices for source and target task lists in the board
             const sourceTaskListIndex = newTaskLists.findIndex(list => list.id === sourceTaskList.id);
             const targetTaskListIndex = newTaskLists.findIndex(list => list.id === targetTaskList.id);
-            
+
             // Within one task list
             if (sourceTaskListIndex === targetTaskListIndex) {
                 const activeTaskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex(t => t.id === activeId);
@@ -195,16 +193,16 @@ export default function Board({ boardId }: BoardProps) {
                     })
                 }
             }
-            
+
             // Find the task to move in the source list
             const taskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex(t => t.id === activeTask.id);
 
             // Remove task from source list
             const [removedTask] = newTaskLists[sourceTaskListIndex].tasks.splice(taskIndex, 1);
-            
+
             // Update the task's taskListId to match the new list
             removedTask.taskListId = targetTaskList.id;
-            
+
             // Determine insertion position in target list
             let insertPosition;
             if (isOverTask) {
@@ -215,7 +213,7 @@ export default function Board({ boardId }: BoardProps) {
                 // If over a task list, add at the start
                 insertPosition = 0;
             }
-            
+
             // Insert task at the new position in target list
             newTaskLists[targetTaskListIndex].tasks.splice(insertPosition, 0, removedTask);
 
@@ -258,7 +256,7 @@ export default function Board({ boardId }: BoardProps) {
                         }
                         {
                             activeTask &&
-                            <TaskCard task={activeTask} />
+                            <TaskCard task={activeTask} boardId={boardId} />
                         }
                     </DragOverlay>,
                     document.body
