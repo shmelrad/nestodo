@@ -1,6 +1,9 @@
 import { z } from "zod"
 import { workspacesApi } from "@/lib/api/workspaces"
 import { FormDialog } from "@/components/ui/form-dialog"
+import { useWorkspaceStore } from "@/stores/workspaceStore"
+import { useMutation } from "@tanstack/react-query"
+import { Workspace } from "@/types/workspace"
 
 const createWorkspaceSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -14,6 +17,15 @@ interface CreateWorkspaceDialogProps {
 }
 
 export default function CreateWorkspaceDialog({ open, onOpenChange }: CreateWorkspaceDialogProps) {
+  const setSelectedWorkspaceId = useWorkspaceStore((state) => state.setSelectedWorkspaceId)
+
+  const createWorkspaceMutation = useMutation({
+    mutationFn: (data: CreateWorkspaceSchema) => workspacesApi.createWorkspace(data),
+    onSuccess: (workspace: Workspace) => {
+      setSelectedWorkspaceId(workspace.id)
+    }
+  })
+
   return (
     <FormDialog<CreateWorkspaceSchema>
       open={open}
@@ -22,7 +34,7 @@ export default function CreateWorkspaceDialog({ open, onOpenChange }: CreateWork
       description="Add a new workspace to organize your tasks"
       schema={createWorkspaceSchema}
       defaultValues={{ title: "" }}
-      onSubmit={(data) => workspacesApi.createWorkspace(data)}
+      onSubmit={(data) => createWorkspaceMutation.mutateAsync(data)}
       invalidateQueryKeys={[["workspaces"]]}
       submitButtonText="Create workspace"
       pendingButtonText="Creating..."

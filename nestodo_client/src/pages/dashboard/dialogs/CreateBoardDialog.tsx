@@ -1,6 +1,9 @@
 import { z } from "zod"
 import { boardsApi } from "@/lib/api/boards"
 import { FormDialog } from "@/components/ui/form-dialog"
+import { useWorkspaceStore } from "@/stores/workspaceStore"
+import { useMutation } from "@tanstack/react-query"
+import { Board } from "@/types/board"
 
 const createBoardSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -15,6 +18,15 @@ interface CreateBoardDialogProps {
 }
 
 export default function CreateBoardDialog({ open, onOpenChange, workspaceId }: CreateBoardDialogProps) {
+  const setSelectedBoardId = useWorkspaceStore((state) => state.setSelectedBoardId)
+
+  const createBoardMutation = useMutation({
+    mutationFn: (data: CreateBoardSchema) => boardsApi.createBoard(workspaceId, data),
+    onSuccess: (board: Board) => {
+      setSelectedBoardId(workspaceId, board.id)
+    }
+  })
+
   return (
     <FormDialog<CreateBoardSchema>
       open={open}
@@ -23,7 +35,7 @@ export default function CreateBoardDialog({ open, onOpenChange, workspaceId }: C
       description="Add a new board to organize your tasks"
       schema={createBoardSchema}
       defaultValues={{ title: "" }}
-      onSubmit={(data) => boardsApi.createBoard(workspaceId, data)}
+      onSubmit={(data) => createBoardMutation.mutateAsync(data)}
       invalidateQueryKeys={[["workspaces"]]}
       submitButtonText="Create board"
       pendingButtonText="Creating..."
