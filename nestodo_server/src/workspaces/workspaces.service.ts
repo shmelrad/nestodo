@@ -36,7 +36,7 @@ export class WorkspacesService {
       throw new NotFoundException('User not found');
     }
 
-    return this.prisma.workspace.findMany({ where: { userId: user.id }, include: { boards: true } });
+    return this.prisma.workspace.findMany({ where: { userId: user.id }, include: { boards: { orderBy: { createdAt: 'asc' } } } });
   }
 
   async update(id: number, updateWorkspaceDto: UpdateWorkspaceDto, userId: number) {
