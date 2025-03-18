@@ -5,6 +5,9 @@ interface CreateWorkspaceRequestDto {
   title: string
 }
 
+interface UpdateWorkspaceRequestDto {
+  title: string
+}
 
 class WorkspacesApi extends BaseApi {
   constructor() {
@@ -17,6 +20,10 @@ class WorkspacesApi extends BaseApi {
 
   getWorkspaces(): Promise<Workspace[]> {
     return this.get<Workspace[]>('/', { auth: true })
+  }
+
+  updateWorkspace(id: number, data: UpdateWorkspaceRequestDto): Promise<Workspace> {
+    return this.patch<Workspace>(`/${id}`, data, { auth: true })
   }
 
   deleteWorkspace(id: number): Promise<void> {

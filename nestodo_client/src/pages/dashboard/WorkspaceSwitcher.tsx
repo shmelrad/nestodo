@@ -1,4 +1,4 @@
-import { ChevronsUpDown, EllipsisVertical, Plus, Trash } from "lucide-react"
+import { ChevronsUpDown, EllipsisVertical, Pencil, Plus, Trash } from "lucide-react"
 import { useState } from "react"
 
 import {
@@ -18,6 +18,7 @@ import { Workspace } from "@/types/workspace"
 import { useWorkspaceStore } from "@/stores/workspaceStore"
 import { useEffect } from "react"
 import CreateWorkspaceDialog from "./dialogs/CreateWorkspaceDialog"
+import EditWorkspaceDialog from "./dialogs/EditWorkspaceDialog"
 import { displayApiError } from "@/lib/utils"
 import { ApiError } from "@/lib/api/base"
 import { toast } from "sonner"
@@ -33,6 +34,7 @@ export function WorkspaceSwitcher({
     workspaces
 }: WorkspaceSwitcherProps) {
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
+    const [editingWorkspaceId, setEditingWorkspaceId] = useState<number | null>(null)
     const { selectedWorkspaceId, setSelectedWorkspaceId } = useWorkspaceStore((state) => state)
     const queryClient = useQueryClient()
 
@@ -63,6 +65,8 @@ export function WorkspaceSwitcher({
         }
         deleteWorkspaceMutation.mutate(workspaceId)
     };
+
+    const editingWorkspace = workspaces.find(workspace => workspace.id === editingWorkspaceId);
 
     return (
         <>
@@ -102,8 +106,12 @@ export function WorkspaceSwitcher({
                                             <EllipsisVertical className="hover:text-foreground/50 cursor-pointer" size={18}/>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
+                                            <DropdownMenuItem onSelect={() => setEditingWorkspaceId(workspace.id)}>
+                                                <Pencil className="mr-2" size={18}/>
+                                                Edit Workspace
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onSelect={() => handleDeleteWorkspace(workspace.id)}>
-                                                <Trash/>
+                                                <Trash className="mr-2" size={18}/>
                                                 Delete Workspace
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -126,6 +134,17 @@ export function WorkspaceSwitcher({
                 open={createDialogOpen}
                 onOpenChange={setCreateDialogOpen}
             />
+            
+            {editingWorkspace && (
+                <EditWorkspaceDialog
+                    open={editingWorkspaceId !== null}
+                    onOpenChange={(open) => {
+                        if (!open) setEditingWorkspaceId(null);
+                    }}
+                    workspaceId={editingWorkspace.id}
+                    currentTitle={editingWorkspace.title}
+                />
+            )}
         </>
     )
 }
