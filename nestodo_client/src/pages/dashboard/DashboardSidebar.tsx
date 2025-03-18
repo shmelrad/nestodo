@@ -163,7 +163,10 @@ const BoardSidebarMenuItem = ({ board, selectedWorkspaceId, getSelectedBoardId, 
                         <EllipsisVertical className={`ml-auto hover:text-foreground/50 cursor-pointer ${isMouseOver || isDropdownOpen || isSelected ? "visible" : "invisible"}`} size={18} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => setEditDialogOpen(true)}>
+                        <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            setEditDialogOpen(true);
+                        }}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit Board
                         </DropdownMenuItem>
