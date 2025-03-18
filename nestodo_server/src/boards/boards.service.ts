@@ -3,26 +3,19 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { ReorderTaskListsDto } from './dto/reorder-task-lists.dto';
 import { PrismaService } from '@/prisma/prisma.service';
-import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class BoardsService {
   constructor(
     private prisma: PrismaService,
-    private userService: UsersService,
   ) {}
 
   async create(createBoardDto: CreateBoardDto, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
     // Check if workspace exists and belongs to user
     const workspace = await this.prisma.workspace.findFirst({
       where: {
         id: createBoardDto.workspaceId,
-        userId: user.id,
+        userId: userId,
       },
     });
 
@@ -38,17 +31,28 @@ export class BoardsService {
     });
   }
 
-  async findOne(id: number, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  async checkBoardAccess(id: number, userId: number) {
     const board = await this.prisma.board.findFirst({
       where: {
         id,
         workspace: {
-          userId: user.id,
+          userId,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!board) {
+      throw new NotFoundException('Board not found');
+    }
+  }
+
+  async findOne(id: number, userId: number) {
+    const board = await this.prisma.board.findFirst({
+      where: {
+        id,
+        workspace: {
+          userId: userId,
         },
       },
       include: {
@@ -75,7 +79,7 @@ export class BoardsService {
   }
 
   async update(id: number, updateBoardDto: UpdateBoardDto, userId: number) {
-    await this.findOne(id, userId);
+    await this.checkBoardAccess(id, userId);
 
     return this.prisma.board.update({
       where: { id },
@@ -119,7 +123,7 @@ export class BoardsService {
   }
 
   async remove(id: number, userId: number) {
-    await this.findOne(id, userId);
+    await this.checkBoardAccess(id, userId);
 
     return this.prisma.board.delete({
       where: { id },

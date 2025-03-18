@@ -3,27 +3,20 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { PrismaService } from '@/prisma/prisma.service';
-import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class TasksService {
   constructor(
-    private prisma: PrismaService,
-    private userService: UsersService,
+    private prisma: PrismaService
   ) {}
 
   async create(createTaskDto: CreateTaskDto, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
     const taskList = await this.prisma.taskList.findUnique({
       where: {
         id: createTaskDto.taskListId,
         board: {
           workspace: {
-            userId: user.id,
+            userId: userId,
           },
         },
       },
@@ -54,18 +47,7 @@ export class TasksService {
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const task = await this.prisma.task.findUnique({
-      where: { id, taskList: { board: { workspace: { userId: user.id } } } },
-    });
-
-    if (!task) {
-      throw new NotFoundException('Task not found');
-    }
+    await this.checkTaskAccess(id, userId);
 
     return this.prisma.task.update({
       where: { id },
@@ -74,11 +56,6 @@ export class TasksService {
   }
 
   async moveTask(id: number, moveTaskDto: MoveTaskDto, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
     // Verify the task exists and belongs to the user
     const task = await this.prisma.task.findUnique({
       where: { 
@@ -87,7 +64,7 @@ export class TasksService {
           id: moveTaskDto.sourceTaskListId,
           board: { 
             workspace: { 
-              userId: user.id 
+              userId: userId 
             } 
           } 
         } 
@@ -107,7 +84,7 @@ export class TasksService {
         id: moveTaskDto.destinationTaskListId,
         board: {
           workspace: {
-            userId: user.id,
+            userId: userId,
           },
         },
       },
@@ -229,17 +206,7 @@ export class TasksService {
   }
 
   async remove(id: number, userId: number) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const task = await this.prisma.task.findUnique({
-      where: { id, taskList: { board: { workspace: { userId: user.id } } } },
-      include: {
-        taskList: true,
-      },
-    });
+    const task = await this.findOne(id, userId);
 
     if (!task) {
       throw new NotFoundException('Task not found');
@@ -272,5 +239,46 @@ export class TasksService {
     }
 
     return { success: true };
+  }
+
+  async findOne(id: number, userId: number) {
+    const task = await this.prisma.task.findFirst({
+      where: {
+        id,
+        taskList: {
+          board: {
+            workspace: {
+              userId: userId,
+            },
+          },
+        },
+      },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    return task;
+  }
+
+  async checkTaskAccess(id: number, userId: number) {
+    const task = await this.prisma.task.findFirst({
+      where: {
+        id,
+        taskList: {
+          board: {
+            workspace: {
+              userId,
+            },
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
   }
 }
