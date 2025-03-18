@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 interface DashboardHeaderProps {
     workspaceTitle: string
@@ -52,6 +53,9 @@ export function DashboardHeader({ workspaceTitle, boardTitle }: DashboardHeaderP
                         )}
                     </BreadcrumbList>
                 </Breadcrumb>
+                <div className="ml-auto mr-4">
+                    <ThemeToggle />
+                </div>
             </div>
         </header>
     )
