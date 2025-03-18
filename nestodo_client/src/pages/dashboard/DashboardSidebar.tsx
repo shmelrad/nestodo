@@ -1,5 +1,6 @@
 import * as React from "react"
 import CreateBoardDialog from "./dialogs/CreateBoardDialog"
+import EditBoardDialog from "./dialogs/EditBoardDialog"
 
 import { WorkspaceSwitcher } from "@/pages/dashboard/WorkspaceSwitcher"
 import {
@@ -18,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
 import { Workspace } from "@/types/workspace";
-import { CircleFadingPlus, EllipsisVertical, Trash } from "lucide-react";
+import { CircleFadingPlus, EllipsisVertical, Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -142,7 +143,9 @@ interface BoardSidebarMenuItemProps {
 const BoardSidebarMenuItem = ({ board, selectedWorkspaceId, getSelectedBoardId, setSelectedBoardId, handleDeleteBoard }: BoardSidebarMenuItemProps) => {
     const [isMouseOver, setIsMouseOver] = useState(false)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [editDialogOpen, setEditDialogOpen] = useState(false)
     const isSelected = getSelectedBoardId(selectedWorkspaceId) === board.id
+    
     return (
         <SidebarMenuItem key={board.id}>
             <SidebarMenuButton
@@ -160,13 +163,23 @@ const BoardSidebarMenuItem = ({ board, selectedWorkspaceId, getSelectedBoardId, 
                         <EllipsisVertical className={`ml-auto hover:text-foreground/50 cursor-pointer ${isMouseOver || isDropdownOpen || isSelected ? "visible" : "invisible"}`} size={18} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => setEditDialogOpen(true)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit Board
+                        </DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => handleDeleteBoard(board.id)}>
-                            <Trash />
+                            <Trash className="mr-2 h-4 w-4" />
                             Delete Board
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuButton>
+            <EditBoardDialog
+                open={editDialogOpen}
+                onOpenChange={setEditDialogOpen}
+                boardId={board.id}
+                currentTitle={board.title}
+            />
         </SidebarMenuItem>
     )
 }
