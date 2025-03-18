@@ -11,6 +11,8 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
+import { useWorkspaceStore } from "@/stores/workspaceStore"
+import { Workspace } from "@/types/workspace"
 const createWorkspaceSchema = z.object({
     title: z.string().min(1, "Title is required"),
 })
@@ -20,6 +22,7 @@ type CreateWorkspaceSchema = z.infer<typeof createWorkspaceSchema>
 export default function CreatingFirstWorkspace() {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
+    const setSelectedWorkspaceId = useWorkspaceStore((state) => state.setSelectedWorkspaceId)
 
     const { data: workspaces, isLoading } = useQuery({
         queryKey: ["workspaces"],
@@ -41,9 +44,10 @@ export default function CreatingFirstWorkspace() {
 
     const createWorkspaceMutation = useMutation({
         mutationFn: (data: CreateWorkspaceSchema) => workspacesApi.createWorkspace(data),
-        onSuccess: async () => {
+        onSuccess: async (workspace: Workspace) => {
             await queryClient.refetchQueries({ queryKey: ["workspaces"] });
             form.reset()
+            setSelectedWorkspaceId(workspace.id)
             toast.success("Workspace created successfully")
             navigate("/dashboard")
         },
