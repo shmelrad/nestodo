@@ -12,7 +12,7 @@ import { subtasksApi } from "@/lib/api/subtasks"
 import { ApiError } from "@/lib/api/base"
 import { displayApiError } from "@/lib/utils"
 import { toast } from "sonner"
-import { Task, Subtask } from "@/types/task"
+import { Task, Subtask, TaskPriority } from "@/types/task"
 import { Trash, ChevronDown, Plus, Circle, CircleCheck } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -21,6 +21,7 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface TaskDialogProps {
     open: boolean
@@ -32,6 +33,7 @@ interface TaskDialogProps {
 export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDialogProps) {
     const [title, setTitle] = useState(task.title)
     const [description, setDescription] = useState(task.description || "")
+    const [priority, setPriority] = useState<TaskPriority | null>(task.priority)
     const queryClient = useQueryClient()
 
     const updateTaskMutation = useMutation({
@@ -55,6 +57,18 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
         },
         onError: (error: ApiError) => {
             displayApiError("Failed to delete task", error)
+        },
+    })
+
+    const updatePriorityMutation = useMutation({
+        mutationFn: (priority: TaskPriority | null) => 
+            tasksApi.updateTask(task.id, { priority: priority }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["board", boardId] })
+            toast.success("Task priority updated")
+        },
+        onError: (error: ApiError) => {
+            displayApiError("Failed to update task priority", error)
         },
     })
 
@@ -86,6 +100,12 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
         deleteTaskMutation.mutate()
     }
 
+    const handlePriorityChange = (value: string) => {
+        const newPriority = value === "null" ? null : value as TaskPriority
+        setPriority(newPriority)
+        updatePriorityMutation.mutate(newPriority)
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="min-w-xl max-w-6xl">
@@ -103,6 +123,21 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                         </form>
                     </DialogTitle>
                 </DialogHeader>
+
+                <div className="mb-6">
+                    <h3 className="text-sm font-semibold mb-2">Priority</h3>
+                    <Select value={priority ?? "null"} onValueChange={handlePriorityChange}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="null">No priority</SelectItem>
+                            <SelectItem value={TaskPriority.LOW}>Low</SelectItem>
+                            <SelectItem value={TaskPriority.MEDIUM}>Medium</SelectItem>
+                            <SelectItem value={TaskPriority.HIGH}>High</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
 
                 <div className="flex gap-8">
                     <div className="flex-1 rounded-md">

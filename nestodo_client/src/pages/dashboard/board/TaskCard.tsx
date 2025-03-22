@@ -1,4 +1,4 @@
-import { Subtask, Task } from "@/types/task";
+import { Subtask, Task, TaskPriority } from "@/types/task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
@@ -20,6 +20,12 @@ interface TaskCardProps {
     task: Task
     boardId: number
 }
+
+const priorityColors = {
+    [TaskPriority.LOW]: "border-l-blue-500",
+    [TaskPriority.MEDIUM]: "border-l-yellow-500",
+    [TaskPriority.HIGH]: "border-l-red-500"
+} as const
 
 export default function TaskCard({ task, boardId }: TaskCardProps) {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -87,7 +93,13 @@ export default function TaskCard({ task, boardId }: TaskCardProps) {
     return (
         <>
             <div
-                className={`p-3 ${task.completed ? 'bg-muted/20 border-border/40' : 'bg-muted/40 border-border'} hover:bg-muted/60 border rounded-lg cursor-pointer ${isDragging ? "opacity-30" : ""} flex flex-col relative`}
+                className={`p-3 ${
+                    task.completed ? 'bg-muted/20 border-border/40' : 'bg-muted/40 border-border'
+                } hover:bg-muted/60 border rounded-lg cursor-pointer ${
+                    isDragging ? "opacity-30" : ""
+                } flex flex-col relative ${
+                    task.priority ? `border-l-4 ${priorityColors[task.priority]}` : ''
+                }`}
                 ref={setNodeRef}
                 style={style}
                 {...attributes}

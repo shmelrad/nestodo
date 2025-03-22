@@ -12,7 +12,7 @@ interface UpdateTaskRequestDto {
   description?: string
   completed?: boolean
   subtasks?: Subtask[]
-  priority?: TaskPriority
+  priority?: TaskPriority | null
   attachments?: Attachment[]
 }
 
