@@ -1,5 +1,6 @@
+import { Attachment } from '@/types/attachment'
 import { BaseApi } from './base'
-import { Task } from '@/types/task'
+import { Subtask, Task, TaskPriority } from '@/types/task'
 
 interface CreateTaskRequestDto {
   title: string
@@ -10,6 +11,9 @@ interface UpdateTaskRequestDto {
   title?: string
   description?: string
   completed?: boolean
+  subtasks?: Subtask[]
+  priority?: TaskPriority
+  attachments?: Attachment[]
 }
 
 interface MoveTaskRequestDto {

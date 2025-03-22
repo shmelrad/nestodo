@@ -8,12 +8,19 @@ import {
 import { Button } from "@/components/ui/button"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { tasksApi } from "@/lib/api/tasks"
+import { subtasksApi } from "@/lib/api/subtasks"
 import { ApiError } from "@/lib/api/base"
 import { displayApiError } from "@/lib/utils"
 import { toast } from "sonner"
-import { Task } from "@/types/task"
-import { Trash } from "lucide-react"
+import { Task, Subtask } from "@/types/task"
+import { Trash, ChevronDown, Plus, Circle, CircleCheck } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { Input } from "@/components/ui/input"
 
 interface TaskDialogProps {
     open: boolean
@@ -96,7 +103,7 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                         </form>
                     </DialogTitle>
                 </DialogHeader>
-                
+
                 <div className="flex gap-8">
                     <div className="flex-1 rounded-md">
                         <div className="mb-6">
@@ -110,8 +117,8 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                                 disabled={updateTaskMutation.isPending}
                             />
                         </div>
+                        <SubtasksList subtasks={task.subtasks} taskId={task.id} boardId={boardId} />
                     </div>
-
                     <div className="flex flex-col gap-1">
                         <h3 className="text-sm font-semibold">Actions</h3>
                         <Button
@@ -127,5 +134,121 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                 </div>
             </DialogContent>
         </Dialog>
+    )
+}
+
+const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[], taskId: number, boardId: number }) => {
+    const queryClient = useQueryClient()
+    const [isSubtasksOpen, setIsSubtasksOpen] = useState(true)
+    const [newSubtaskTitle, setNewSubtaskTitle] = useState("")
+
+    const completedSubtasks = subtasks.filter(s => s.completed).length
+    const totalSubtasks = subtasks.length
+    const progress = totalSubtasks === 0 ? 0 : (completedSubtasks / totalSubtasks) * 100
+
+    const handleAddSubtask = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (newSubtaskTitle.trim()) {
+            addSubtaskMutation.mutate(newSubtaskTitle.trim())
+        }
+    }
+
+    const addSubtaskMutation = useMutation({
+        mutationFn: (title: string) => subtasksApi.createSubtask({ title, taskId: taskId }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["board", boardId] })
+            setNewSubtaskTitle("")
+            toast.success("Subtask added successfully")
+        },
+        onError: (error: ApiError) => {
+            displayApiError("Failed to add subtask", error)
+        },
+    })
+
+    const toggleSubtaskMutation = useMutation({
+        mutationFn: (subtask: Subtask) =>
+            subtasksApi.updateSubtask(subtask.id, { completed: !subtask.completed }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["board", boardId] })
+        },
+        onError: (error: ApiError) => {
+            displayApiError("Failed to update subtask", error)
+        },
+    })
+
+    return (
+        <Collapsible open={isSubtasksOpen} onOpenChange={setIsSubtasksOpen}>
+            <div className="flex items-center justify-between mb-2">
+                <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="!px-0 hover:bg-transparent">
+                        <ChevronDown className={`h-4 w-4 transition-transform ${isSubtasksOpen ? "transform rotate-180" : ""}`} />
+                        <div className="flex items-center gap-2 relative">
+                            <span className="text-sm font-semibold ml-2">Subtasks</span>
+                            <svg className="size-4 mt-1 ml-2">
+                                <circle
+                                    cx="8"
+                                    cy="8"
+                                    r="6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    className="text-muted"
+                                />
+                                <circle
+                                    cx="8"
+                                    cy="8"
+                                    r="6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeDasharray={`${2 * Math.PI * 6}`}
+                                    strokeDashoffset={`${2 * Math.PI * 6 * (1 - progress / 100)}`}
+                                    className="text-green-500 transition-all"
+                                    transform="rotate(-90 8 8)"
+                                />
+                            </svg>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                            ({completedSubtasks}/{totalSubtasks})
+                        </span>
+                    </Button>
+                </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent>
+                <div className="space-y-2">
+                    {subtasks.map((subtask) => (
+                        <div
+                            key={subtask.id}
+                            className="flex items-center gap-2 group"
+                            onClick={() => toggleSubtaskMutation.mutate(subtask)}
+                        >
+                            {subtask.completed ? (
+                                <CircleCheck className="h-4 w-4 text-green-500 cursor-pointer" />
+                            ) : (
+                                <Circle className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                            )}
+                            <span className={`text-sm ${subtask.completed ? "line-through text-muted-foreground" : ""}`}>
+                                {subtask.title}
+                            </span>
+                        </div>
+                    ))}
+                    <form onSubmit={handleAddSubtask} className="flex gap-2 mt-2">
+                        <Input
+                            placeholder="Add a subtask..."
+                            value={newSubtaskTitle}
+                            onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                            className="h-8 text-sm"
+                        />
+                        <Button
+                            size="sm"
+                            type="submit"
+                            disabled={addSubtaskMutation.isPending || !newSubtaskTitle.trim()}
+                        >
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </form>
+                </div>
+            </CollapsibleContent>
+        </Collapsible>
     )
 }

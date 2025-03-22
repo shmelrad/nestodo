@@ -52,6 +52,13 @@ export class TasksService {
     return this.prisma.task.update({
       where: { id },
       data: updateTaskDto,
+      include: {
+        subtasks: {
+          orderBy: {
+            id: 'asc',
+          },
+        },
+      },
     });
   }
 

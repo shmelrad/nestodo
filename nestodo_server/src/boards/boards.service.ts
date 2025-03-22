@@ -65,6 +65,13 @@ export class BoardsService {
               orderBy: {
                 position: 'asc',
               },
+              include: {
+                subtasks: {
+                  orderBy: {
+                    id: 'asc',
+                  },
+                },
+              },
             },
           },
         },
