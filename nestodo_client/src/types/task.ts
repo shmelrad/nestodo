@@ -7,6 +7,7 @@ export interface Task {
     description: string | null
     priority: TaskPriority | null
     completed: boolean
+    duration: number | null
     attachments: Attachment[]
     subtasks: Subtask[]
     taskList: TaskList

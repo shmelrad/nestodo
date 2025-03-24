@@ -29,6 +29,7 @@ model Task {
   priority    TaskPriority?
   completed   Boolean       @default(false)
   position    Int           @default(0)
+  duration    Int?          // Store in minutes
   attachments Attachment[]
   subtasks    Subtask[]
   taskList    TaskList      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
