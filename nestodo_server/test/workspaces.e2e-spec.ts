@@ -30,8 +30,8 @@ describe('Workspaces (e2e)', () => {
     await prisma.user.deleteMany()
 
     const { access_token } = await authService.register({
-      email: 'test@example.com',
-      username: 'testuser',
+      email: `test@example.com`,
+      username: `testuser`,
       password: 'password123',
     })
     authToken = access_token
