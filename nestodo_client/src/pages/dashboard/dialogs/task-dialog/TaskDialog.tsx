@@ -14,7 +14,6 @@ import { displayApiError } from "@/lib/utils"
 import { toast } from "sonner"
 import { Task, Subtask } from "@/types/task"
 import { Trash, ChevronDown, Plus, Circle, CircleCheck } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
 import {
     Collapsible,
     CollapsibleContent,
@@ -25,7 +24,7 @@ import AttachmentsList from "./AttachmentsList"
 import TaskOptions from "./TaskOptions"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { Separator } from "@/components/ui/separator"
-
+import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
 interface TaskDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -97,10 +96,11 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                 <DialogHeader className="gap-0">
                     <DialogTitle>
                         <form onSubmit={handleTitleSubmit}>
-                            <textarea
+                            <AutosizeTextarea
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="text-lg md:text-xl h-8 focus:h-auto font-semibold resize-none w-full outline-none focus:border border-border focus:bg-muted/50 rounded-md px-1"
+                                className="shadow-none text-lg h-4 md:text-xl font-semibold resize-none w-full bg-transparent dark:bg-transparent outline-none border-none focus:border border-border focus:bg-muted/50 focus:dark:bg-muted/50 rounded-md px-1"
+                                offsetBorder={0}
                                 onBlur={handleTitleSubmit}
                                 onKeyDown={handleKeyDown}
                                 disabled={updateTaskMutation.isPending}
@@ -115,7 +115,7 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                         <TaskOptions task={task} boardId={boardId} />
                         <div className="flex-1 rounded-md">
                             <h3 className="text-sm font-semibold mb-2">Description</h3>
-                            <Textarea
+                            <AutosizeTextarea
                                 className="p-3 resize-none"
                                 placeholder="Add description..."
                                 value={description}
