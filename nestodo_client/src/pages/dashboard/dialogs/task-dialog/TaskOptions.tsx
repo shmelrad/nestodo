@@ -7,6 +7,12 @@ import { useState } from "react";
 import { ApiError } from "@/lib/api/base";
 import { displayApiError } from "@/lib/utils";
 
+const priorityColors = {
+    [TaskPriority.LOW]: "bg-green-500",
+    [TaskPriority.MEDIUM]: "bg-yellow-500",
+    [TaskPriority.HIGH]: "bg-red-500",
+}
+
 export default function TaskOptions({ task, boardId }: { task: Task, boardId: number }) {
     const [priority, setPriority] = useState<TaskPriority | null>(task.priority)
     const queryClient = useQueryClient()
@@ -39,9 +45,9 @@ export default function TaskOptions({ task, boardId }: { task: Task, boardId: nu
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="null">No priority</SelectItem>
-                        <SelectItem value={TaskPriority.LOW}>Low</SelectItem>
-                        <SelectItem value={TaskPriority.MEDIUM}>Medium</SelectItem>
-                        <SelectItem value={TaskPriority.HIGH}>High</SelectItem>
+                        <SelectItem value={TaskPriority.LOW}><span className={`${priorityColors[TaskPriority.LOW]} rounded-full w-2 h-2`}></span>Low</SelectItem>
+                        <SelectItem value={TaskPriority.MEDIUM}><span className={`${priorityColors[TaskPriority.MEDIUM]} rounded-full w-2 h-2`}></span>Medium</SelectItem>
+                        <SelectItem value={TaskPriority.HIGH}><span className={`${priorityColors[TaskPriority.HIGH]} rounded-full w-2 h-2`}></span>High</SelectItem>
                     </SelectContent>
                 </Select>)
         }
