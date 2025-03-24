@@ -15,10 +15,12 @@ import { Board } from "@/types/board";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { subtasksApi } from "@/lib/api/subtasks";
+import { Badge } from "@/components/ui/badge";
 
 interface TaskCardProps {
     task: Task
     boardId: number
+    workspaceId: number
 }
 
 const priorityColors = {
@@ -27,7 +29,7 @@ const priorityColors = {
     [TaskPriority.HIGH]: "border-l-red-500"
 } as const
 
-export default function TaskCard({ task, boardId }: TaskCardProps) {
+export default function TaskCard({ task, boardId, workspaceId }: TaskCardProps) {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [isMouseOver, setIsMouseOver] = useState(false);
     const { attributes, listeners, setNodeRef, transition, transform, isDragging } = useSortable(
@@ -108,29 +110,44 @@ export default function TaskCard({ task, boardId }: TaskCardProps) {
                 onMouseEnter={() => setIsMouseOver(true)}
                 onMouseLeave={() => setIsMouseOver(false)}
             >
-                <div className="flex items-center">
-                    {!isDraggingTask && (
-                        <Tooltip disableHoverableContent>
-                            <TooltipTrigger asChild>
-                                <div 
-                                    onClick={handleToggleCompletion} 
-                                    className={`absolute left-3 transition-all duration-300 ease-in-out ${isMouseOver ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
+                <div className="flex flex-col">
+                    {task.tags && task.tags.length > 0 && (
+                        <div className={`flex flex-wrap gap-1 mb-2 ${isDragging ? "invisible" : ""}`}>
+                            {task.tags.map((tag, index) => (
+                                <Badge 
+                                    key={index} 
+                                    variant="outline" 
+                                    className="text-xs bg-foreground/90 dark:bg-white/90 text-background dark:text-black"
                                 >
-                                    {task.completed ? (
-                                        <CircleCheck className="size-4.5 text-green-500 hover:text-green-600" />
-                                    ) : (
-                                        <Circle className="size-4.5 text-muted-foreground hover:text-foreground/80" />
-                                    )}
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>{task.completed ? "Mark as incomplete" : "Mark as complete"}</p>
-                            </TooltipContent>
-                        </Tooltip>
+                                    {tag.name}
+                                </Badge>
+                            ))}
+                        </div>
                     )}
-                    <div className={`flex flex-col gap-2 transition-all duration-300 ease-in-out ${isMouseOver && !isDraggingTask ? "ml-6" : "ml-0"}`}>
-                        <div className="flex items-start justify-between">
-                            <h3 className={`${task.completed ? 'text-muted-foreground line-through' : ''} text-sm whitespace-pre-wrap [overflow-wrap:anywhere] ${isDragging ? "invisible" : ""}`}>{task.title}</h3>
+                    <div className="flex items-center">
+                        {!isDraggingTask && (
+                            <Tooltip disableHoverableContent>
+                                <TooltipTrigger asChild>
+                                    <div 
+                                        onClick={handleToggleCompletion} 
+                                        className={`absolute left-3 transition-all duration-300 ease-in-out ${isMouseOver ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
+                                    >
+                                        {task.completed ? (
+                                            <CircleCheck className="size-4.5 text-green-500 hover:text-green-600" />
+                                        ) : (
+                                            <Circle className="size-4.5 text-muted-foreground hover:text-foreground/80" />
+                                        )}
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{task.completed ? "Mark as incomplete" : "Mark as complete"}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
+                        <div className={`flex flex-col gap-2 transition-all duration-300 ease-in-out ${isMouseOver && !isDraggingTask ? "ml-6" : "ml-0"}`}>
+                            <div className="flex items-start justify-between">
+                                <h3 className={`${task.completed ? 'text-muted-foreground line-through' : ''} text-sm whitespace-pre-wrap [overflow-wrap:anywhere] ${isDragging ? "invisible" : ""}`}>{task.title}</h3>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +161,7 @@ export default function TaskCard({ task, boardId }: TaskCardProps) {
                 onOpenChange={setEditDialogOpen}
                 task={task}
                 boardId={boardId}
+                workspaceId={workspaceId}
             />
         </>
     )

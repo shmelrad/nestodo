@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import AttachmentsList from "./AttachmentsList"
-import TaskOptions from "./TaskOptions"
+import TaskOptions from "./task-options/TaskOptions"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { Separator } from "@/components/ui/separator"
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
@@ -30,9 +30,10 @@ interface TaskDialogProps {
     onOpenChange: (open: boolean) => void
     task: Task
     boardId: number
+    workspaceId: number
 }
 
-export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDialogProps) {
+export default function TaskDialog({ open, onOpenChange, task, boardId, workspaceId }: TaskDialogProps) {
     const [title, setTitle] = useState(task.title)
     const [description, setDescription] = useState(task.description || "")
     const queryClient = useQueryClient()
@@ -107,12 +108,12 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                             />
                         </form>
                     </DialogTitle>
-                    <DialogDescription/>
+                    <DialogDescription />
                 </DialogHeader>
 
                 <div className="flex flex-1 gap-4">
                     <div className="flex flex-col flex-1 overflow-auto gap-4">
-                        <TaskOptions task={task} boardId={boardId} />
+                        <TaskOptions task={task} boardId={boardId} workspaceId={workspaceId} />
                         <div className="flex-1 rounded-md">
                             <h3 className="text-sm font-semibold mb-2">Description</h3>
                             <AutosizeTextarea
@@ -124,7 +125,7 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                                 disabled={updateTaskMutation.isPending}
                             />
                         </div>
-                        <Separator/>
+                        <Separator />
                         <SubtasksList subtasks={task.subtasks} taskId={task.id} boardId={boardId} />
                         <AttachmentsList attachments={task.attachments} taskId={task.id} boardId={boardId} />
                     </div>
