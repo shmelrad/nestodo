@@ -1,31 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SubtasksService } from './subtasks.service';
 import { CreateSubtaskDto } from './dto/create-subtask.dto';
 import { UpdateSubtaskDto } from './dto/update-subtask.dto';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { GetUserId } from '@/auth/decorators/get-user-id.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('subtasks')
 export class SubtasksController {
-  constructor(private readonly subtasksService: SubtasksService) {}
+  constructor(private readonly subtasksService: SubtasksService) { }
 
   @Post()
-  create(@Body() createSubtaskDto: CreateSubtaskDto, @Request() req) {
-    return this.subtasksService.create(createSubtaskDto, +req.user.sub);
+  create(@Body() createSubtaskDto: CreateSubtaskDto, @GetUserId() userId: number) {
+    return this.subtasksService.create(createSubtaskDto, userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
-    return this.subtasksService.findOne(+id, +req.user.sub);
+  findOne(@Param('id') id: string, @GetUserId() userId: number) {
+    return this.subtasksService.findOne(+id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubtaskDto: UpdateSubtaskDto, @Request() req) {
-    return this.subtasksService.update(+id, updateSubtaskDto, +req.user.sub);
+  update(@Param('id') id: string, @Body() updateSubtaskDto: UpdateSubtaskDto, @GetUserId() userId: number) {
+    return this.subtasksService.update(+id, updateSubtaskDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req) {
-    return this.subtasksService.remove(+id, +req.user.sub);
+  remove(@Param('id') id: string, @GetUserId() userId: number) {
+    return this.subtasksService.remove(+id, userId);
   }
 }

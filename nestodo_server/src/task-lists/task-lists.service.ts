@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateTaskListDto } from './dto/create-task-list.dto';
 import { UpdateTaskListDto } from './dto/update-task-list.dto';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -87,6 +87,14 @@ export class TaskListsService {
   }
 
   async findOne(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Task list not found');
+    }
+    
     const taskList = await this.prisma.taskList.findFirst({
       where: {
         id,
@@ -113,6 +121,14 @@ export class TaskListsService {
   }
 
   async checkTaskListAccess(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Task list not found');
+    }
+    
     const taskList = await this.prisma.taskList.findFirst({
       where: {
         id,

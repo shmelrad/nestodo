@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { ReorderTaskListsDto } from './dto/reorder-task-lists.dto';
@@ -32,6 +32,14 @@ export class BoardsService {
   }
 
   async checkBoardAccess(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Board not found');
+    }
+
     const board = await this.prisma.board.findFirst({
       where: {
         id,
@@ -48,6 +56,14 @@ export class BoardsService {
   }
 
   async findOne(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Board not found');
+    }
+
     const board = await this.prisma.board.findFirst({
       where: {
         id,

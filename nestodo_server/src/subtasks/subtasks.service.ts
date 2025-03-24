@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateSubtaskDto } from './dto/create-subtask.dto';
 import { UpdateSubtaskDto } from './dto/update-subtask.dto';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -16,6 +16,14 @@ export class SubtasksService {
   }
 
   async findOne(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Subtask not found');
+    }
+    
     const subtask = await this.prisma.subtask.findFirst({
       where: {
         id,
@@ -75,6 +83,14 @@ export class SubtasksService {
   }
 
   private async checkSubtaskAccess(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Subtask not found');
+    }
+
     const subtask = await this.prisma.subtask.findFirst({
       where: {
         id,
