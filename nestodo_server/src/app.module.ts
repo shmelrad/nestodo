@@ -11,13 +11,14 @@ import { TaskListsModule } from './task-lists/task-lists.module';
 import { TasksModule } from './tasks/tasks.module';
 import { SubtasksModule } from './subtasks/subtasks.module';
 import { AttachmentsModule } from './attachments/attachments.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [AuthModule, UsersModule, PrismaModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
-    WorkspacesModule, BoardsModule, TaskListsModule, TasksModule, SubtasksModule, AttachmentsModule],
+    WorkspacesModule, BoardsModule, TaskListsModule, TasksModule, SubtasksModule, AttachmentsModule, TagsModule],
   controllers: [AppController],
   providers: [AppService],
 })

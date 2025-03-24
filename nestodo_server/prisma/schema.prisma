@@ -30,11 +30,11 @@ model Task {
   completed   Boolean       @default(false)
   position    Int           @default(0)
   duration    Int?          // Store in minutes
-  tags        String[]
   attachments Attachment[]
   subtasks    Subtask[]
   taskList    TaskList      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
   taskListId  Int
+  tags        WorkspaceTag[] @relation("TaskToTag")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -92,6 +92,7 @@ model WorkspaceTag {
   name        String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId Int
+  tasks       Task[]    @relation("TaskToTag")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

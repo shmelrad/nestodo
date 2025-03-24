@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
@@ -49,21 +49,82 @@ export class TasksService {
   async update(id: number, updateTaskDto: UpdateTaskDto, userId: number) {
     await this.checkTaskAccess(id, userId);
 
+    let tagsToConnect: { id: number }[] | undefined = undefined;
+    
+    if (updateTaskDto.tags !== undefined) {
+      const taskWithWorkspace = await this.prisma.task.findFirst({
+        where: { id },
+        select: {
+          taskList: {
+            select: {
+              board: {
+                select: {
+                  workspaceId: true
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      if (!taskWithWorkspace) {
+        throw new NotFoundException('Task not found');
+      }
+      
+      const workspaceId = taskWithWorkspace.taskList.board.workspaceId;
+      
+      tagsToConnect = [];
+      
+      for (const tagName of updateTaskDto.tags) {
+        const tag = await this.prisma.workspaceTag.upsert({
+          where: {
+            workspaceId_name: {
+              workspaceId,
+              name: tagName,
+            },
+          },
+          update: {},
+          create: {
+            name: tagName,
+            workspaceId,
+          },
+        });
+        
+        tagsToConnect.push({ id: tag.id });
+      }
+      
+      delete updateTaskDto.tags;
+    }
+    
     return this.prisma.task.update({
-      where: { id },
-      data: updateTaskDto,
+      where: { id: id },
+      data: {
+        title: updateTaskDto.title,
+        description: updateTaskDto.description,
+        completed: updateTaskDto.completed,
+        priority: updateTaskDto.priority,
+        duration: updateTaskDto.duration,
+        
+        ...(tagsToConnect && {
+          tags: {
+            set: [],
+            connect: tagsToConnect
+          }
+        })
+      },
       include: {
         subtasks: {
           orderBy: {
             id: 'asc',
           },
         },
+        attachments: true,
+        tags: true,
       },
     });
   }
 
   async moveTask(id: number, moveTaskDto: MoveTaskDto, userId: number) {
-    // Verify the task exists and belongs to the user
     const task = await this.prisma.task.findUnique({
       where: { 
         id, 
@@ -118,7 +179,6 @@ export class TasksService {
       throw new BadRequestException('Invalid position');
     }
 
-    // Start a transaction to handle all the position updates
     return this.prisma.$transaction(async (prisma) => {
       // If moving within the same list
       if (moveTaskDto.sourceTaskListId === moveTaskDto.destinationTaskListId) {
@@ -219,7 +279,6 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
 
-    // Delete the task
     await this.prisma.task.delete({
       where: { id },
     });
@@ -249,6 +308,14 @@ export class TasksService {
   }
 
   async findOne(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Task not found');
+    }
+    
     const task = await this.prisma.task.findFirst({
       where: {
         id,
@@ -260,6 +327,11 @@ export class TasksService {
           },
         },
       },
+      include: {
+        subtasks: true,
+        attachments: true,
+        tags: true,
+      },
     });
 
     if (!task) {
@@ -270,6 +342,14 @@ export class TasksService {
   }
 
   async checkTaskAccess(id: number, userId: number) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!id) {
+      throw new NotFoundException('Task not found');
+    }
+
     const task = await this.prisma.task.findFirst({
       where: {
         id,

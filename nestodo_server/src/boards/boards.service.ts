@@ -87,6 +87,7 @@ export class BoardsService {
                     id: 'asc',
                   },
                 },
+                tags: true,
                 attachments: true,
               },
             },
