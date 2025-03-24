@@ -45,6 +45,15 @@ export class TasksService {
         ...createTaskDto,
         position: maxPosition + 1,
       },
+      include: {
+        subtasks: {
+          orderBy: {
+            id: 'asc',
+          },
+        },
+        attachments: true,
+        tags: true,
+      },
     })
   }
 
