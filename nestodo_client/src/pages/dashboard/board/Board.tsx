@@ -264,7 +264,7 @@ export default function Board({ boardId }: BoardProps) {
                     <SortableContext items={taskListsIds ?? []}>
                         {board && (
                             filteredTaskLists.map((taskList) => (
-                                <TaskList key={taskList.id} taskList={taskList} />
+                                <TaskList key={taskList.id} taskList={taskList} workspaceId={board.workspaceId} />
                             ))
                         )}
                     </SortableContext>
@@ -274,11 +274,11 @@ export default function Board({ boardId }: BoardProps) {
                     <DragOverlay modifiers={activeTaskList ? [restrictToHorizontalAxis] : []}>
                         {
                             activeTaskList &&
-                            <TaskList taskList={activeTaskList} />
+                            <TaskList taskList={activeTaskList} workspaceId={board.workspaceId} />
                         }
                         {
                             activeTask &&
-                            <TaskCard task={activeTask} boardId={boardId} />
+                            <TaskCard task={activeTask} boardId={boardId} workspaceId={board.workspaceId} />
                         }
                     </DragOverlay>,
                     document.body

@@ -16,9 +16,10 @@ import EditTaskListDialog from "@/pages/dashboard/dialogs/EditTaskListDialog"
 
 interface TaskListProps {
     taskList: TaskListType
+    workspaceId: number
 }
 
-export default function TaskList({ taskList }: TaskListProps) {
+export default function TaskList({ taskList, workspaceId }: TaskListProps) {
     const [editDialogOpen, setEditDialogOpen] = useState(false)
     const tasksIds = useMemo(() => {
         return taskList.tasks.map(task => `${task.id}`)
@@ -91,7 +92,7 @@ export default function TaskList({ taskList }: TaskListProps) {
             <div className="flex flex-col gap-2 mb-2 flex-[0_1_auto] overflow-y-auto">
                 <SortableContext items={tasksIds}>
                     {taskList.tasks.map((task) => (
-                        <TaskCard key={task.id} task={task} boardId={taskList.boardId} />
+                        <TaskCard key={task.id} task={task} boardId={taskList.boardId} workspaceId={workspaceId} />
                     ))}
                 </SortableContext>
             </div>
