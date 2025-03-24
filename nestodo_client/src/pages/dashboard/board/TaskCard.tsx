@@ -24,7 +24,7 @@ interface TaskCardProps {
 }
 
 const priorityColors = {
-    [TaskPriority.LOW]: "border-l-blue-500",
+    [TaskPriority.LOW]: "border-l-green-500",
     [TaskPriority.MEDIUM]: "border-l-yellow-500",
     [TaskPriority.HIGH]: "border-l-red-500"
 } as const
