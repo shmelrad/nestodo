@@ -74,7 +74,12 @@ export default function LoginPage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {formFields.map((field) => (
-                <FormFieldInput key={field.name} form={form} disabled={loginMutation.isPending} {...field} />
+                <FormFieldInput
+                  key={field.name}
+                  form={form}
+                  disabled={loginMutation.isPending}
+                  {...field}
+                />
               ))}
               <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                 {loginMutation.isPending ? 'Logging in...' : 'Login'}

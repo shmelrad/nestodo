@@ -26,7 +26,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             {protectedRoutes.map((route) => (
-              <Route key={route.path} path={route.path} element={<AuthRoute>{route.element}</AuthRoute>} />
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<AuthRoute>{route.element}</AuthRoute>}
+              />
             ))}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

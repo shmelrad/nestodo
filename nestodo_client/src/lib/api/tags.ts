@@ -21,9 +21,12 @@ class TagsApi extends BaseApi {
   }
 
   deleteWorkspaceTag(workspaceId: number, tagName: string): Promise<{ success: boolean }> {
-    return this.delete<{ success: boolean }>(`/workspace/${workspaceId}/${encodeURIComponent(tagName)}`, {
-      auth: true,
-    })
+    return this.delete<{ success: boolean }>(
+      `/workspace/${workspaceId}/${encodeURIComponent(tagName)}`,
+      {
+        auth: true,
+      },
+    )
   }
 }
 

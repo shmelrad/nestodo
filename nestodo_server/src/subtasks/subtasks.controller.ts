@@ -21,7 +21,11 @@ export class SubtasksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubtaskDto: UpdateSubtaskDto, @GetUserId() userId: number) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSubtaskDto: UpdateSubtaskDto,
+    @GetUserId() userId: number,
+  ) {
     return this.subtasksService.update(+id, updateSubtaskDto, userId)
   }
 

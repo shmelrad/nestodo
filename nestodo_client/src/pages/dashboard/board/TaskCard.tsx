@@ -151,7 +151,9 @@ export default function TaskCard({ task, boardId, workspaceId }: TaskCardProps) 
             </div>
           </div>
         </div>
-        {task.subtasks && task.subtasks.length > 0 && <SubtasksList subtasks={task.subtasks} boardId={boardId} />}
+        {task.subtasks && task.subtasks.length > 0 && (
+          <SubtasksList subtasks={task.subtasks} boardId={boardId} />
+        )}
       </div>
 
       <TaskDialog
@@ -174,7 +176,8 @@ const SubtasksList = ({ subtasks, boardId }: { subtasks: Subtask[]; boardId: num
   const progress = totalSubtasks === 0 ? 0 : (completedSubtasks / totalSubtasks) * 100
 
   const toggleSubtaskMutation = useMutation({
-    mutationFn: (subtask: Subtask) => subtasksApi.updateSubtask(subtask.id, { completed: !subtask.completed }),
+    mutationFn: (subtask: Subtask) =>
+      subtasksApi.updateSubtask(subtask.id, { completed: !subtask.completed }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board', boardId] })
     },
@@ -190,12 +193,20 @@ const SubtasksList = ({ subtasks, boardId }: { subtasks: Subtask[]; boardId: num
 
   return (
     <Collapsible open={isSubtasksOpen} onOpenChange={setIsSubtasksOpen}>
-      <div className="flex items-center mt-2 justify-between w-full" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="flex items-center mt-2 justify-between w-full"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="hover:bg-muted/90">
-            <ChevronDown className={`transition-transform ${isSubtasksOpen ? 'transform rotate-180' : ''}`} />
+            <ChevronDown
+              className={`transition-transform ${isSubtasksOpen ? 'transform rotate-180' : ''}`}
+            />
             <div className="h-1 w-28 bg-muted rounded-full overflow-hidden ml-2">
-              <div className="h-full bg-green-500 transition-all duration-300" style={{ width: `${progress}%` }} />
+              <div
+                className="h-full bg-green-500 transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
             <span className="text-sm text-muted-foreground">
               ({completedSubtasks}/{totalSubtasks})
@@ -218,7 +229,9 @@ const SubtasksList = ({ subtasks, boardId }: { subtasks: Subtask[]; boardId: num
                   className="h-4 w-4 text-muted-foreground cursor-pointer"
                 />
               )}
-              <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+              <span
+                className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}
+              >
                 {subtask.title}
               </span>
             </div>

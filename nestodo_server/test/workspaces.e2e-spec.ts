@@ -87,6 +87,9 @@ describe('Workspaces (e2e)', () => {
   })
 
   it('should not create workspace without auth token', async () => {
-    await request(app.getHttpServer()).post('/workspaces').send({ title: 'Workspace 1' }).expect(401)
+    await request(app.getHttpServer())
+      .post('/workspaces')
+      .send({ title: 'Workspace 1' })
+      .expect(401)
   })
 })

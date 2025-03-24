@@ -24,13 +24,20 @@ interface TaskDialogProps {
   workspaceId: number
 }
 
-export default function TaskDialog({ open, onOpenChange, task, boardId, workspaceId }: TaskDialogProps) {
+export default function TaskDialog({
+  open,
+  onOpenChange,
+  task,
+  boardId,
+  workspaceId,
+}: TaskDialogProps) {
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description || '')
   const queryClient = useQueryClient()
 
   const updateTaskMutation = useMutation({
-    mutationFn: (data: { title?: string; description?: string }) => tasksApi.updateTask(task.id, data),
+    mutationFn: (data: { title?: string; description?: string }) =>
+      tasksApi.updateTask(task.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board', boardId] })
       toast.success('Task updated successfully')
@@ -140,7 +147,15 @@ export default function TaskDialog({ open, onOpenChange, task, boardId, workspac
   )
 }
 
-const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[]; taskId: number; boardId: number }) => {
+const SubtasksList = ({
+  subtasks,
+  taskId,
+  boardId,
+}: {
+  subtasks: Subtask[]
+  taskId: number
+  boardId: number
+}) => {
   const queryClient = useQueryClient()
   const [isSubtasksOpen, setIsSubtasksOpen] = useState(true)
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
@@ -169,7 +184,8 @@ const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[]; task
   })
 
   const toggleSubtaskMutation = useMutation({
-    mutationFn: (subtask: Subtask) => subtasksApi.updateSubtask(subtask.id, { completed: !subtask.completed }),
+    mutationFn: (subtask: Subtask) =>
+      subtasksApi.updateSubtask(subtask.id, { completed: !subtask.completed }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board', boardId] })
     },
@@ -183,11 +199,21 @@ const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[]; task
       <div className="flex items-center justify-between mb-2">
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="!px-0 hover:bg-transparent">
-            <ChevronDown className={`h-4 w-4 transition-transform ${isSubtasksOpen ? 'transform rotate-180' : ''}`} />
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${isSubtasksOpen ? 'transform rotate-180' : ''}`}
+            />
             <div className="flex items-center gap-2 relative">
               <span className="text-sm font-semibold ml-2">Subtasks</span>
               <svg className="size-4 mt-1 ml-2">
-                <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted" />
+                <circle
+                  cx="8"
+                  cy="8"
+                  r="6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-muted"
+                />
                 <circle
                   cx="8"
                   cy="8"
@@ -221,7 +247,9 @@ const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[]; task
               ) : (
                 <Circle className="h-4 w-4 text-muted-foreground cursor-pointer" />
               )}
-              <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+              <span
+                className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}
+              >
                 {subtask.title}
               </span>
             </div>
@@ -233,7 +261,11 @@ const SubtasksList = ({ subtasks, taskId, boardId }: { subtasks: Subtask[]; task
               onChange={(e) => setNewSubtaskTitle(e.target.value)}
               className="h-8 text-sm"
             />
-            <Button size="sm" type="submit" disabled={addSubtaskMutation.isPending || !newSubtaskTitle.trim()}>
+            <Button
+              size="sm"
+              type="submit"
+              disabled={addSubtaskMutation.isPending || !newSubtaskTitle.trim()}
+            >
               <Plus className="h-4 w-4" />
             </Button>
           </form>

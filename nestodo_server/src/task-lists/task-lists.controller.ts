@@ -15,7 +15,11 @@ export class TaskListsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskListDto: UpdateTaskListDto, @GetUserId() userId: number) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTaskListDto: UpdateTaskListDto,
+    @GetUserId() userId: number,
+  ) {
     return this.taskListsService.update(+id, updateTaskListDto, userId)
   }
 

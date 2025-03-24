@@ -32,7 +32,9 @@ export default function TaskOptions({
       <div className="grid grid-cols-[auto_1fr] gap-y-2 gap-x-6">
         {elements.map((element, index) => (
           <div className="contents" key={index}>
-            <p className="text-sm font-semibold w-max self-center text-muted-foreground">{element.label}</p>
+            <p className="text-sm font-semibold w-max self-center text-muted-foreground">
+              {element.label}
+            </p>
             {element.element}
           </div>
         ))}

@@ -129,7 +129,10 @@ describe('Boards (e2e)', () => {
     })
 
     it('should fail to get non-existent board', async () => {
-      await request(app.getHttpServer()).get('/boards/999999').set('Authorization', `Bearer ${authToken}`).expect(404)
+      await request(app.getHttpServer())
+        .get('/boards/999999')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(404)
     })
   })
 

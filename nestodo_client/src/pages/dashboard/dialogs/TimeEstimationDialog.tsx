@@ -73,7 +73,10 @@ export function TimeEstimationDialog({
     onOpenChange(false)
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: string) => void,
+  ) => {
     const value = e.target.value
     if (value === '' || /^\d*$/.test(value)) {
       onChange(value)

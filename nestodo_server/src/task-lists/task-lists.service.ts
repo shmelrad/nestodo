@@ -26,7 +26,8 @@ export class TaskListsService {
     }
 
     // Get the highest position value to place the new task list at the end
-    const maxPosition = board.taskLists.length > 0 ? Math.max(...board.taskLists.map((list) => list.position)) : -1
+    const maxPosition =
+      board.taskLists.length > 0 ? Math.max(...board.taskLists.map((list) => list.position)) : -1
 
     return this.prisma.taskList.create({
       data: {

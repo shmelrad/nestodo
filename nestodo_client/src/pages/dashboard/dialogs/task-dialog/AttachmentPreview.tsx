@@ -42,7 +42,9 @@ function AttachmentPreview({ previewAttachment, setPreviewAttachment }: Attachme
   return (
     <Dialog open={!!previewAttachment} onOpenChange={(open) => !open && setPreviewAttachment(null)}>
       <DialogContent className="sm:max-w-3xl flex flex-col items-center">
-        <DialogTitle className="text-center mb-4">{previewAttachment?.originalFileName}</DialogTitle>
+        <DialogTitle className="text-center mb-4">
+          {previewAttachment?.originalFileName}
+        </DialogTitle>
         <DialogDescription />
         {previewAttachment && (
           <div className="max-h-[70vh] overflow-hidden">
@@ -59,7 +61,9 @@ function AttachmentPreview({ previewAttachment, setPreviewAttachment }: Attachme
                 </div>
               )
             ) : (
-              <p className="text-center text-muted-foreground">We don't support this file type yet.</p>
+              <p className="text-center text-muted-foreground">
+                We don't support this file type yet.
+              </p>
             )}
           </div>
         )}

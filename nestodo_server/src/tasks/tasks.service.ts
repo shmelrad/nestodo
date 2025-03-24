@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { CreateTaskDto } from './dto/create-task.dto'
 import { UpdateTaskDto } from './dto/update-task.dto'
 import { MoveTaskDto } from './dto/move-task.dto'
@@ -32,7 +37,8 @@ export class TasksService {
     }
 
     // Get the highest position value to place the new task at the end
-    const maxPosition = taskList.tasks.length > 0 ? Math.max(...taskList.tasks.map((task) => task.position)) : -1
+    const maxPosition =
+      taskList.tasks.length > 0 ? Math.max(...taskList.tasks.map((task) => task.position)) : -1
 
     return this.prisma.task.create({
       data: {

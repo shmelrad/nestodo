@@ -21,7 +21,12 @@ import { useWorkspaceStore } from '@/stores/workspaceStore'
 import { Workspace } from '@/types/workspace'
 import { CircleFadingPlus, EllipsisVertical, Pencil, Trash } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { boardsApi } from '@/lib/api/boards'
 import { toast } from 'sonner'
@@ -34,7 +39,9 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function DashboardSidebar({ workspaces, ...props }: DashboardSidebarProps) {
-  const { selectedWorkspaceId, getSelectedBoardId, setSelectedBoardId } = useWorkspaceStore((state) => state)
+  const { selectedWorkspaceId, getSelectedBoardId, setSelectedBoardId } = useWorkspaceStore(
+    (state) => state,
+  )
   const selectedWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
 

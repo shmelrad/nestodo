@@ -23,7 +23,9 @@ export class BaseApi {
   private async fetchWithConfig(endpoint: string, config: RequestConfig = {}): Promise<Response> {
     const url = new URL(`${this.baseUrl}${endpoint}`)
     if (config.params) {
-      Object.entries(config.params).forEach(([key, value]) => url.searchParams.append(key, value.toString()))
+      Object.entries(config.params).forEach(([key, value]) =>
+        url.searchParams.append(key, value.toString()),
+      )
     }
 
     const headers: HeadersInit = {

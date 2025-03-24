@@ -170,7 +170,10 @@ describe('Auth (e2e)', () => {
     })
 
     it('should fail to get profile with invalid token', async () => {
-      await request(app.getHttpServer()).get('/auth/profile').set('Authorization', 'Bearer invalidtoken').expect(401)
+      await request(app.getHttpServer())
+        .get('/auth/profile')
+        .set('Authorization', 'Bearer invalidtoken')
+        .expect(401)
     })
   })
 })

@@ -190,7 +190,9 @@ export default function Board({ boardId }: BoardProps) {
     if (!isActiveTask || (activeId === overId && isOverTask)) return
     const activeTask = active.data.current?.task
     const sourceTaskList = board.taskLists.find((list) => list.id === activeTask.taskListId)
-    const targetTaskListId = isOverTask ? over.data.current?.task.taskListId : over.data.current?.taskList.id
+    const targetTaskListId = isOverTask
+      ? over.data.current?.task.taskListId
+      : over.data.current?.taskList.id
     const targetTaskList = board.taskLists.find((list) => list.id === targetTaskListId)
 
     if (!sourceTaskList || !targetTaskList) return
@@ -205,8 +207,12 @@ export default function Board({ boardId }: BoardProps) {
 
       // Within one task list
       if (sourceTaskListIndex === targetTaskListIndex) {
-        const activeTaskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex((t) => t.id === activeId)
-        const overTaskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex((t) => t.id === overId)
+        const activeTaskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex(
+          (t) => t.id === activeId,
+        )
+        const overTaskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex(
+          (t) => t.id === overId,
+        )
 
         return {
           ...oldData,
@@ -223,7 +229,9 @@ export default function Board({ boardId }: BoardProps) {
       }
 
       // Find the task to move in the source list
-      const taskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex((t) => t.id === activeTask.id)
+      const taskIndex = newTaskLists[sourceTaskListIndex].tasks.findIndex(
+        (t) => t.id === activeTask.id,
+      )
 
       // Remove task from source list
       const [removedTask] = newTaskLists[sourceTaskListIndex].tasks.splice(taskIndex, 1)
@@ -235,8 +243,11 @@ export default function Board({ boardId }: BoardProps) {
       let insertPosition
       if (isOverTask) {
         // If over another task, insert before or after that task
-        const overTaskIndex = newTaskLists[targetTaskListIndex].tasks.findIndex((t) => t.id === overId)
-        insertPosition = overTaskIndex !== -1 ? overTaskIndex : newTaskLists[targetTaskListIndex].tasks.length
+        const overTaskIndex = newTaskLists[targetTaskListIndex].tasks.findIndex(
+          (t) => t.id === overId,
+        )
+        insertPosition =
+          overTaskIndex !== -1 ? overTaskIndex : newTaskLists[targetTaskListIndex].tasks.length
       } else {
         // If over a task list, add at the start
         insertPosition = 0
@@ -259,7 +270,12 @@ export default function Board({ boardId }: BoardProps) {
         <h2 className="text-2xl font-semibold">Task Lists</h2>
         <BoardFilter filter={filter} setFilter={setFilter} isFilterActive={filter !== 'all'} />
       </div>
-      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
+      >
         <div className="flex flex-1 min-h-0 w-full h-full items-start gap-4">
           <SortableContext items={taskListsIds ?? []}>
             {board &&
@@ -271,8 +287,12 @@ export default function Board({ boardId }: BoardProps) {
         </div>
         {createPortal(
           <DragOverlay modifiers={activeTaskList ? [restrictToHorizontalAxis] : []}>
-            {activeTaskList && <TaskList taskList={activeTaskList} workspaceId={board.workspaceId} />}
-            {activeTask && <TaskCard task={activeTask} boardId={boardId} workspaceId={board.workspaceId} />}
+            {activeTaskList && (
+              <TaskList taskList={activeTaskList} workspaceId={board.workspaceId} />
+            )}
+            {activeTask && (
+              <TaskCard task={activeTask} boardId={boardId} workspaceId={board.workspaceId} />
+            )}
           </DragOverlay>,
           document.body,
         )}

@@ -45,7 +45,10 @@ export function BoardFilter({ filter, setFilter, isFilterActive }: BoardFilterPr
           <Separator className="my-2" />
           <div className="space-y-2">
             <h4 className="text-sm font-medium mb-1">Card status</h4>
-            <RadioGroup value={filter} onValueChange={(val: string) => setFilter(val as FilterOption)}>
+            <RadioGroup
+              value={filter}
+              onValueChange={(val: string) => setFilter(val as FilterOption)}
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem id="all-tasks" value="all" />
                 <Label htmlFor="all-tasks" className="text-sm">

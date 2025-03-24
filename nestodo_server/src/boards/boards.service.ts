@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { CreateBoardDto } from './dto/create-board.dto'
 import { UpdateBoardDto } from './dto/update-board.dto'
 import { ReorderTaskListsDto } from './dto/reorder-task-lists.dto'
@@ -118,7 +123,9 @@ export class BoardsService {
 
     // Verify all task list IDs belong to this board
     const boardTaskListIds = board.taskLists.map((list) => list.id)
-    const allTaskListsBelongToBoard = reorderTaskListsDto.taskListIds.every((id) => boardTaskListIds.includes(id))
+    const allTaskListsBelongToBoard = reorderTaskListsDto.taskListIds.every((id) =>
+      boardTaskListIds.includes(id),
+    )
 
     if (!allTaskListsBelongToBoard) {
       throw new BadRequestException('One or more task lists do not belong to this board')

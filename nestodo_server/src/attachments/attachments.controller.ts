@@ -45,7 +45,11 @@ export class AttachmentsController {
   }
 
   @Get('download/:id')
-  async downloadFile(@Param('id', ParseIntPipe) id: number, @Res({ passthrough: true }) res: Response, @Req() req) {
+  async downloadFile(
+    @Param('id', ParseIntPipe) id: number,
+    @Res({ passthrough: true }) res: Response,
+    @Req() req,
+  ) {
     const attachment = await this.attachmentsService.findOne(id, +req.user.sub)
     if (!attachment) {
       return res.status(404).send('File not found')

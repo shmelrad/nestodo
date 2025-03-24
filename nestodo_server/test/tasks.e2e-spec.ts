@@ -119,7 +119,11 @@ describe('Tasks (e2e)', () => {
     })
 
     it('should validate required fields', async () => {
-      await request(app.getHttpServer()).post('/tasks').set('Authorization', `Bearer ${authToken}`).send({}).expect(400)
+      await request(app.getHttpServer())
+        .post('/tasks')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({})
+        .expect(400)
     })
   })
 
@@ -278,7 +282,10 @@ describe('Tasks (e2e)', () => {
     })
 
     it('should fail to delete non-existent task', async () => {
-      await request(app.getHttpServer()).delete('/tasks/999999').set('Authorization', `Bearer ${authToken}`).expect(404)
+      await request(app.getHttpServer())
+        .delete('/tasks/999999')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(404)
     })
   })
 

@@ -1,5 +1,14 @@
 import { TaskPriority } from '@prisma/client'
-import { IsOptional, IsString, IsBoolean, IsEnum, IsArray, IsNumber, IsInt, Min } from 'class-validator'
+import {
+  IsOptional,
+  IsString,
+  IsBoolean,
+  IsEnum,
+  IsArray,
+  IsNumber,
+  IsInt,
+  Min,
+} from 'class-validator'
 import { PartialType } from '@nestjs/swagger'
 import { CreateTaskDto } from './create-task.dto'
 

@@ -15,7 +15,12 @@ interface EditBoardDialogProps {
   currentTitle: string
 }
 
-export default function EditBoardDialog({ open, onOpenChange, boardId, currentTitle }: EditBoardDialogProps) {
+export default function EditBoardDialog({
+  open,
+  onOpenChange,
+  boardId,
+  currentTitle,
+}: EditBoardDialogProps) {
   return (
     <FormDialog<EditBoardSchema>
       open={open}

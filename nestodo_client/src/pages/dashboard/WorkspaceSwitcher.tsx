@@ -94,7 +94,10 @@ export function WorkspaceSwitcher({ workspaces }: WorkspaceSwitcherProps) {
                   </DropdownMenuCheckboxItem>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <EllipsisVertical className="hover:text-foreground/50 cursor-pointer" size={18} />
+                      <EllipsisVertical
+                        className="hover:text-foreground/50 cursor-pointer"
+                        size={18}
+                      />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem onSelect={() => setEditingWorkspaceId(workspace.id)}>

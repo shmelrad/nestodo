@@ -160,7 +160,10 @@ describe('Subtasks (e2e)', () => {
     })
 
     it('should fail to get non-existent subtask', async () => {
-      await request(app.getHttpServer()).get('/subtasks/999999').set('Authorization', `Bearer ${authToken}`).expect(404)
+      await request(app.getHttpServer())
+        .get('/subtasks/999999')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(404)
     })
   })
 

@@ -96,7 +96,9 @@ export default function AttachmentsList({ attachments, taskId, boardId }: Attach
         </div>
         <CollapsibleContent>
           <div className="space-y-3">
-            {attachments.length === 0 && <div className="text-sm text-muted-foreground">No files attached</div>}
+            {attachments.length === 0 && (
+              <div className="text-sm text-muted-foreground">No files attached</div>
+            )}
             {attachments.map((attachment) => (
               <div
                 key={attachment.id}
@@ -158,7 +160,10 @@ export default function AttachmentsList({ attachments, taskId, boardId }: Attach
           </div>
         </CollapsibleContent>
       </Collapsible>
-      <AttachmentPreview previewAttachment={previewAttachment} setPreviewAttachment={setPreviewAttachment} />
+      <AttachmentPreview
+        previewAttachment={previewAttachment}
+        setPreviewAttachment={setPreviewAttachment}
+      />
     </>
   )
 }

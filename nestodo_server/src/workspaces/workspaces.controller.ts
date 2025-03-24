@@ -21,7 +21,11 @@ export class WorkspacesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto, @GetUserId() userId: number) {
+  update(
+    @Param('id') id: string,
+    @Body() updateWorkspaceDto: UpdateWorkspaceDto,
+    @GetUserId() userId: number,
+  ) {
     return this.workspacesService.update(+id, updateWorkspaceDto, userId)
   }
 

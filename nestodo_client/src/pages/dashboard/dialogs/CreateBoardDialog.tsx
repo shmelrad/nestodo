@@ -17,7 +17,11 @@ interface CreateBoardDialogProps {
   workspaceId: number
 }
 
-export default function CreateBoardDialog({ open, onOpenChange, workspaceId }: CreateBoardDialogProps) {
+export default function CreateBoardDialog({
+  open,
+  onOpenChange,
+  workspaceId,
+}: CreateBoardDialogProps) {
   const setSelectedBoardId = useWorkspaceStore((state) => state.setSelectedBoardId)
 
   const createBoardMutation = useMutation({

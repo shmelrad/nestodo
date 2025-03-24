@@ -64,7 +64,9 @@ export default function CreatingFirstWorkspace() {
     <div className="min-h-screen flex items-center">
       <div className="max-w-lg mx-auto flex flex-col">
         <h1 className="text-2xl font-bold">Create your first workspace</h1>
-        <p className="text-sm text-muted-foreground">Start organizing your tasks by creating your first workspace.</p>
+        <p className="text-sm text-muted-foreground">
+          Start organizing your tasks by creating your first workspace.
+        </p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">

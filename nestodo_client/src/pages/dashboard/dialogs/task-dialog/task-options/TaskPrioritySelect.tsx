@@ -4,7 +4,13 @@ import { ApiError } from '@/lib/api/base'
 import { displayApiError } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Task, TaskPriority } from '@/types/task'
 
 const priorityColors = {
@@ -23,7 +29,8 @@ function TaskPrioritySelect({ task, boardId }: TaskPrioritySelectProps) {
   const queryClient = useQueryClient()
 
   const updatePriorityMutation = useMutation({
-    mutationFn: (priority: TaskPriority | null) => tasksApi.updateTask(task.id, { priority: priority }),
+    mutationFn: (priority: TaskPriority | null) =>
+      tasksApi.updateTask(task.id, { priority: priority }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board', boardId] })
       toast.success('Task priority updated')
@@ -40,7 +47,11 @@ function TaskPrioritySelect({ task, boardId }: TaskPrioritySelectProps) {
   }
 
   return (
-    <Select value={priority ?? 'null'} onValueChange={handlePriorityChange} disabled={updatePriorityMutation.isPending}>
+    <Select
+      value={priority ?? 'null'}
+      onValueChange={handlePriorityChange}
+      disabled={updatePriorityMutation.isPending}
+    >
       <SelectTrigger className="self-center" size="sm">
         <SelectValue placeholder="Select priority" />
       </SelectTrigger>

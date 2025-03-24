@@ -21,7 +21,11 @@ export class BoardsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto, @GetUserId() userId: number) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+    @GetUserId() userId: number,
+  ) {
     return this.boardsService.update(+id, updateBoardDto, userId)
   }
 

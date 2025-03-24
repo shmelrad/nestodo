@@ -71,7 +71,10 @@ interface MultipleSelectorProps {
   /** Props of `Command` */
   commandProps?: React.ComponentPropsWithoutRef<typeof Command>
   /** Props of `CommandInput` */
-  inputProps?: Omit<React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>, 'value' | 'placeholder' | 'disabled'>
+  inputProps?: Omit<
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
+    'value' | 'placeholder' | 'disabled'
+  >
   /** hide the clear all button. */
   hideClearAllButton?: boolean
 }
@@ -142,23 +145,24 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof CommandPrimitive.Empty>>(
-  ({ className, ...props }, forwardedRef) => {
-    const render = useCommandState((state) => state.filtered.count === 0)
+const CommandEmpty = forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof CommandPrimitive.Empty>
+>(({ className, ...props }, forwardedRef) => {
+  const render = useCommandState((state) => state.filtered.count === 0)
 
-    if (!render) return null
+  if (!render) return null
 
-    return (
-      <div
-        ref={forwardedRef}
-        className={cn('py-6 text-center text-sm', className)}
-        cmdk-empty=""
-        role="presentation"
-        {...props}
-      />
-    )
-  },
-)
+  return (
+    <div
+      ref={forwardedRef}
+      className={cn('py-6 text-center text-sm', className)}
+      cmdk-empty=""
+      role="presentation"
+      {...props}
+    />
+  )
+})
 
 CommandEmpty.displayName = 'CommandEmpty'
 
@@ -198,7 +202,9 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
     const dropdownRef = React.useRef<HTMLDivElement>(null) // Added this
 
     const [selected, setSelected] = React.useState<Option[]>(value || [])
-    const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
+    const [options, setOptions] = React.useState<GroupOption>(
+      transToGroupOption(arrayDefaultOptions, groupBy),
+    )
     const [inputValue, setInputValue] = React.useState('')
     const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
 
@@ -398,7 +404,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       return <CommandEmpty>{emptyIndicator}</CommandEmpty>
     }, [creatable, emptyIndicator, onSearch, options])
 
-    const selectables = React.useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected])
+    const selectables = React.useMemo<GroupOption>(
+      () => removePickedOption(options, selected),
+      [options, selected],
+    )
 
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
     const commandFilter = React.useCallback(() => {
@@ -424,7 +433,9 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
           commandProps?.onKeyDown?.(e)
         }}
         className={cn('h-auto overflow-visible bg-transparent', commandProps?.className)}
-        shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don't want to filter the options. You can still override it.
+        shouldFilter={
+          commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch
+        } // When onSearch is provided, we don't want to filter the options. You can still override it.
         filter={commandFilter()}
       >
         <div
@@ -570,7 +581,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                 setSelected(newOptions)
                                 onChange?.(newOptions)
                               }}
-                              className={cn('cursor-pointer', option.disable && 'cursor-default text-muted-foreground')}
+                              className={cn(
+                                'cursor-pointer',
+                                option.disable && 'cursor-default text-muted-foreground',
+                              )}
                             >
                               {option.label}
                             </CommandItem>

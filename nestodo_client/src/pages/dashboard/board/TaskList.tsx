@@ -1,7 +1,12 @@
 import { TaskList as TaskListType } from '@/types/taskList'
 import { AddTask } from './AddTask'
 import { Separator } from '@/components/ui/separator'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { EllipsisVertical, GripVertical, Pencil, Trash } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiError } from '@/lib/api/base'
@@ -62,14 +67,21 @@ export default function TaskList({ taskList, workspaceId }: TaskListProps) {
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <div {...attributes} {...listeners} className="cursor-grab hover:text-foreground/70 touch-none">
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab hover:text-foreground/70 touch-none"
+          >
             <GripVertical size={18} />
           </div>
           <h3 className="font-bold">{taskList.title}</h3>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <EllipsisVertical className="ml-auto hover:text-foreground/50 cursor-pointer" size={18} />
+            <EllipsisVertical
+              className="ml-auto hover:text-foreground/50 cursor-pointer"
+              size={18}
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onSelect={() => setEditDialogOpen(true)}>
@@ -86,7 +98,12 @@ export default function TaskList({ taskList, workspaceId }: TaskListProps) {
       <div className="flex flex-col gap-2 mb-2 flex-[0_1_auto] overflow-y-auto">
         <SortableContext items={tasksIds}>
           {taskList.tasks.map((task) => (
-            <TaskCard key={task.id} task={task} boardId={taskList.boardId} workspaceId={workspaceId} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              boardId={taskList.boardId}
+              workspaceId={workspaceId}
+            />
           ))}
         </SortableContext>
       </div>
