@@ -31,4 +31,4 @@ class WorkspacesApi extends BaseApi {
   }
 }
 
-export const workspacesApi = new WorkspacesApi() 
+export const workspacesApi = new WorkspacesApi()

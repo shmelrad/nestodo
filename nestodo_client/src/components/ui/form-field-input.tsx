@@ -1,6 +1,6 @@
-import { FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { UseFormReturn, FieldValues, Path } from "react-hook-form"
+import { FormField, FormItem, FormLabel, FormMessage, FormControl } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { UseFormReturn, FieldValues, Path } from 'react-hook-form'
 
 interface FormFieldInputProps<T extends FieldValues> {
   form: UseFormReturn<T>
@@ -17,7 +17,7 @@ export function FormFieldInput<T extends FieldValues>({
   label,
   type,
   placeholder,
-  disabled
+  disabled,
 }: FormFieldInputProps<T>) {
   return (
     <FormField
@@ -27,12 +27,7 @@ export function FormFieldInput<T extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input
-              type={type}
-              placeholder={placeholder}
-              disabled={disabled}
-              {...field}
-            />
+            <Input type={type} placeholder={placeholder} disabled={disabled} {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>

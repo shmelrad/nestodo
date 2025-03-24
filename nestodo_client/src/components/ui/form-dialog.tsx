@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -6,16 +6,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useForm, DefaultValues, FieldValues, Path } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-import { ApiError } from "@/lib/api/base"
-import { displayApiError } from "@/lib/utils"
+} from '@/components/ui/dialog'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm, DefaultValues, FieldValues, Path } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { ApiError } from '@/lib/api/base'
+import { displayApiError } from '@/lib/utils'
 
 export interface FormFieldConfig<T extends FieldValues> {
   name: Path<T>
@@ -58,7 +58,7 @@ export function FormDialog<T extends FieldValues>({
   fields,
 }: FormDialogProps<T>) {
   const queryClient = useQueryClient()
-  
+
   const form = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -67,7 +67,7 @@ export function FormDialog<T extends FieldValues>({
   const mutation = useMutation({
     mutationFn: onSubmit,
     onSuccess: () => {
-      invalidateQueryKeys.forEach(queryKey => {
+      invalidateQueryKeys.forEach((queryKey) => {
         queryClient.invalidateQueries({ queryKey })
       })
       onOpenChange(false)
@@ -89,9 +89,7 @@ export function FormDialog<T extends FieldValues>({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            {description}
-          </DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form<T> {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -104,11 +102,7 @@ export function FormDialog<T extends FieldValues>({
                   <FormItem>
                     <FormLabel>{field.label}</FormLabel>
                     <FormControl>
-                      <Input 
-                        type={field.type || "text"}
-                        placeholder={field.placeholder} 
-                        {...formField} 
-                      />
+                      <Input type={field.type || 'text'} placeholder={field.placeholder} {...formField} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,10 +110,7 @@ export function FormDialog<T extends FieldValues>({
               />
             ))}
             <DialogFooter>
-              <Button 
-                type="submit" 
-                disabled={mutation.isPending}
-              >
+              <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending ? pendingButtonText : submitButtonText}
               </Button>
             </DialogFooter>
@@ -128,4 +119,4 @@ export function FormDialog<T extends FieldValues>({
       </DialogContent>
     </Dialog>
   )
-} 
+}

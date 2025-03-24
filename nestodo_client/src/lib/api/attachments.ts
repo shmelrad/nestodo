@@ -10,7 +10,9 @@ class AttachmentsApi extends BaseApi {
     const formData = new FormData()
     formData.append('file', file)
     console.log(formData)
-    return this.postFile<Attachment>(`/upload/${taskId}`, formData, { auth: true })
+    return this.postFile<Attachment>(`/upload/${taskId}`, formData, {
+      auth: true,
+    })
   }
 
   async deleteAttachment(id: number) {
@@ -28,19 +30,19 @@ class AttachmentsApi extends BaseApi {
   async downloadAttachment(id: number) {
     try {
       const blob = await this.getFileBlob(`/download/${id}`, { auth: true })
-      
+
       const attachment = await this.getAttachment(id)
       const filename = attachment.originalFileName
-      
+
       const url = window.URL.createObjectURL(blob)
-      
+
       const a = document.createElement('a')
       a.href = url
       a.download = filename
-      
+
       document.body.appendChild(a)
       a.click()
-      
+
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
@@ -50,4 +52,4 @@ class AttachmentsApi extends BaseApi {
   }
 }
 
-export const attachmentsApi = new AttachmentsApi() 
+export const attachmentsApi = new AttachmentsApi()

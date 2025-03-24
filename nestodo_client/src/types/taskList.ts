@@ -1,8 +1,8 @@
-import { Task } from "./task"
+import { Task } from './task'
 
 export interface TaskList {
-    id: number
-    title: string
-    tasks: Task[]
-    boardId: number
+  id: number
+  title: string
+  tasks: Task[]
+  boardId: number
 }

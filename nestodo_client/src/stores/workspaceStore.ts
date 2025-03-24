@@ -11,12 +11,12 @@ interface WorkspaceState {
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => {
   const selectedWorkspaceId = localStorage.getItem('selectedWorkspaceId')
   const selectedBoardIds = JSON.parse(localStorage.getItem('selectedBoardIds') || '{}')
-  
+
   const normalizedBoardIds: Record<number, number> = {}
   Object.entries(selectedBoardIds).forEach(([key, value]) => {
     normalizedBoardIds[Number(key)] = Number(value)
   })
-  
+
   return {
     selectedWorkspaceId: selectedWorkspaceId ? parseInt(selectedWorkspaceId) : undefined,
     selectedBoardIds: normalizedBoardIds,
@@ -31,15 +31,14 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => {
       set((state) => ({
         selectedBoardIds: {
           ...state.selectedBoardIds,
-          [workspaceId]: boardId
-        }
+          [workspaceId]: boardId,
+        },
       }))
       const updatedBoardIds = {
         ...get().selectedBoardIds,
-        [workspaceId]: boardId
+        [workspaceId]: boardId,
       }
       localStorage.setItem('selectedBoardIds', JSON.stringify(updatedBoardIds))
     },
   }
 })
-

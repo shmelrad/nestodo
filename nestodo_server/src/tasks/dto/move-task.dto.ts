@@ -1,15 +1,15 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator'
 
 export class MoveTaskDto {
   @IsNumber()
   @IsNotEmpty()
-  sourceTaskListId: number;
+  sourceTaskListId: number
 
   @IsNumber()
   @IsNotEmpty()
-  destinationTaskListId: number;
+  destinationTaskListId: number
 
   @IsNumber()
   @IsNotEmpty()
-  newPosition: number;
-} 
+  newPosition: number
+}

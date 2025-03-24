@@ -1,12 +1,12 @@
-import { z } from "zod"
-import { workspacesApi } from "@/lib/api/workspaces"
-import { FormDialog } from "@/components/ui/form-dialog"
-import { useWorkspaceStore } from "@/stores/workspaceStore"
-import { useMutation } from "@tanstack/react-query"
-import { Workspace } from "@/types/workspace"
+import { z } from 'zod'
+import { workspacesApi } from '@/lib/api/workspaces'
+import { FormDialog } from '@/components/ui/form-dialog'
+import { useWorkspaceStore } from '@/stores/workspaceStore'
+import { useMutation } from '@tanstack/react-query'
+import { Workspace } from '@/types/workspace'
 
 const createWorkspaceSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, 'Title is required'),
 })
 
 type CreateWorkspaceSchema = z.infer<typeof createWorkspaceSchema>
@@ -23,7 +23,7 @@ export default function CreateWorkspaceDialog({ open, onOpenChange }: CreateWork
     mutationFn: (data: CreateWorkspaceSchema) => workspacesApi.createWorkspace(data),
     onSuccess: (workspace: Workspace) => {
       setSelectedWorkspaceId(workspace.id)
-    }
+    },
   })
 
   return (
@@ -33,19 +33,19 @@ export default function CreateWorkspaceDialog({ open, onOpenChange }: CreateWork
       title="Create new workspace"
       description="Add a new workspace to organize your tasks"
       schema={createWorkspaceSchema}
-      defaultValues={{ title: "" }}
+      defaultValues={{ title: '' }}
       onSubmit={(data) => createWorkspaceMutation.mutateAsync(data)}
-      invalidateQueryKeys={[["workspaces"]]}
+      invalidateQueryKeys={[['workspaces']]}
       submitButtonText="Create workspace"
       pendingButtonText="Creating..."
       successMessage="Workspace created successfully"
       errorMessage="Failed to create workspace"
       fields={[
         {
-          name: "title",
-          label: "Title",
-          placeholder: "My Workspace"
-        }
+          name: 'title',
+          label: 'Title',
+          placeholder: 'My Workspace',
+        },
       ]}
     />
   )

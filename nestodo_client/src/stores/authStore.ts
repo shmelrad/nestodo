@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { jwtDecode } from "jwt-decode";
-import { JwtUser } from '@/types/jwtUser';
+import { jwtDecode } from 'jwt-decode'
+import { JwtUser } from '@/types/jwtUser'
 
 interface AuthState {
   token: string | null
@@ -11,9 +11,9 @@ interface AuthState {
 }
 
 interface DecodedUser {
-  sub: string;
-  email: string;
-  username: string;
+  sub: string
+  email: string
+  username: string
 }
 
 const decodeUser = (token: string) => {
@@ -43,7 +43,6 @@ export const useAuthStore = create<AuthState>((set) => {
     logout: () => {
       localStorage.removeItem('token')
       set({ token: null, user: null })
-    }
+    },
   }
 })
-

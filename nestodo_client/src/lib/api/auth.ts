@@ -1,4 +1,4 @@
-import { JwtUser } from '@/types/jwtUser';
+import { JwtUser } from '@/types/jwtUser'
 import { BaseApi } from './base'
 
 interface LoginRequestDto {
@@ -7,9 +7,9 @@ interface LoginRequestDto {
 }
 
 interface RegisterRequestDto {
-  email: string;
-  username: string;
-  password: string;
+  email: string
+  username: string
+  password: string
 }
 
 export interface LoginResponse {
@@ -34,4 +34,4 @@ class AuthApi extends BaseApi {
   }
 }
 
-export const authApi = new AuthApi() 
+export const authApi = new AuthApi()

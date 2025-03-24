@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -6,24 +6,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 
 const timeEstimationSchema = z.object({
-  hours: z.string().optional().refine(val => !val || /^\d*$/.test(val), {
-    message: "Hours must be a number"
-  }),
-  minutes: z.string().optional().refine(val => !val || /^\d*$/.test(val), {
-    message: "Minutes must be a number"
-  })
-});
+  hours: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\d*$/.test(val), {
+      message: 'Hours must be a number',
+    }),
+  minutes: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\d*$/.test(val), {
+      message: 'Minutes must be a number',
+    }),
+})
 
-type TimeEstimationFormValues = z.infer<typeof timeEstimationSchema>;
+type TimeEstimationFormValues = z.infer<typeof timeEstimationSchema>
 
 interface TimeEstimationDialogProps {
   open: boolean
@@ -43,45 +49,43 @@ export function TimeEstimationDialog({
   const form = useForm<TimeEstimationFormValues>({
     resolver: zodResolver(timeEstimationSchema),
     defaultValues: {
-      hours: initialHours ? String(initialHours) : "",
-      minutes: initialMinutes ? String(initialMinutes) : "",
+      hours: initialHours ? String(initialHours) : '',
+      minutes: initialMinutes ? String(initialMinutes) : '',
     },
-  });
+  })
 
   function onSubmit(data: TimeEstimationFormValues) {
-    const hours = data.hours ? parseInt(data.hours) : 0;
-    const minutes = data.minutes ? parseInt(data.minutes) : 0;
-    
-    if ((data.hours === "" && data.minutes === "") || (hours === 0 && minutes === 0)) {
-      onSave(null);
+    const hours = data.hours ? parseInt(data.hours) : 0
+    const minutes = data.minutes ? parseInt(data.minutes) : 0
+
+    if ((data.hours === '' && data.minutes === '') || (hours === 0 && minutes === 0)) {
+      onSave(null)
     } else {
-      const totalMinutes = (hours * 60) + minutes;
-      onSave(totalMinutes);
+      const totalMinutes = hours * 60 + minutes
+      onSave(totalMinutes)
     }
-    
-    onOpenChange(false);
+
+    onOpenChange(false)
   }
 
   const handleClear = () => {
-    onSave(null);
-    onOpenChange(false);
+    onSave(null)
+    onOpenChange(false)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
-    const value = e.target.value;
-    if (value === "" || /^\d*$/.test(value)) {
-      onChange(value);
+    const value = e.target.value
+    if (value === '' || /^\d*$/.test(value)) {
+      onChange(value)
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Time Estimate</DialogTitle>
-          <DialogDescription>
-            Estimate how long this task will take to complete
-          </DialogDescription>
+          <DialogDescription>Estimate how long this task will take to complete</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -141,4 +145,4 @@ export function TimeEstimationDialog({
       </DialogContent>
     </Dialog>
   )
-} 
+}

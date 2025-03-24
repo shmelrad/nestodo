@@ -1,4 +1,3 @@
 export interface RegisterResponseDTO {
-  access_token: string;
+  access_token: string
 }
-
