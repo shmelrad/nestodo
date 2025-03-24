@@ -2,12 +2,17 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service'
 import * as fs from 'fs/promises'
 import * as path from 'path'
+import { TasksService } from '@/tasks/tasks.service'
 
 @Injectable()
 export class AttachmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private tasksService: TasksService,
+  ) {}
 
-  async create(file: Express.Multer.File, taskId: number) {
+  async create(file: Express.Multer.File, taskId: number, userId: number) {
+    await this.tasksService.checkTaskAccess(taskId, userId)
     if (!file.originalname) {
       throw new BadRequestException('File name is required')
     }

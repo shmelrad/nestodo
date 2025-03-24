@@ -31,8 +31,12 @@ export class AttachmentsController {
       },
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Param('taskId', ParseIntPipe) taskId: number) {
-    return this.attachmentsService.create(file, taskId)
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Req() req,
+  ) {
+    return this.attachmentsService.create(file, taskId, +req.user.sub)
   }
 
   @Get(':id')

@@ -7,6 +7,7 @@ import { extname, join } from 'path'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 import { PrismaModule } from '@/prisma/prisma.module'
+import { TasksModule } from '@/tasks/tasks.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PrismaModule } from '@/prisma/prisma.module'
       }),
     }),
     PrismaModule,
+    TasksModule,
   ],
   controllers: [AttachmentsController],
   providers: [AttachmentsService],
