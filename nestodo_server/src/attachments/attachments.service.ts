@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import { TasksService } from '@/tasks/tasks.service'
+import { UPLOADS_FOLDER_PATH } from './atachments.constants'
 
 @Injectable()
 export class AttachmentsService {
@@ -84,6 +85,6 @@ export class AttachmentsService {
   }
 
   getFilePath(fileName: string) {
-    return path.join(process.cwd(), 'uploads', fileName)
+    return path.join(UPLOADS_FOLDER_PATH, fileName)
   }
 }
