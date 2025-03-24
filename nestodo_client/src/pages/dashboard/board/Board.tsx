@@ -24,7 +24,7 @@ import TaskCard from './TaskCard'
 import { Board as BoardType } from '@/types/board'
 import { tasksApi } from '@/lib/api/tasks'
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
-import { BoardFilter, FilterOption } from './BoardFilter'
+import { BoardFilter, TaskFilters } from './BoardFilter'
 
 interface BoardProps {
   boardId: number
@@ -37,7 +37,10 @@ export default function Board({ boardId }: BoardProps) {
     taskId: number
     sourceTaskListId: number
   } | null>(null)
-  const [filter, setFilter] = useState<FilterOption>('all')
+  const [filters, setFilters] = useState<TaskFilters>({
+    completion: 'all',
+    priorities: [],
+  })
 
   const queryClient = useQueryClient()
 
@@ -101,8 +104,19 @@ export default function Board({ boardId }: BoardProps) {
 
     return board.taskLists.map((taskList) => {
       const filteredTasks = taskList.tasks.filter((task) => {
-        if (filter === 'complete') return task.completed
-        if (filter === 'incomplete') return !task.completed
+        // Check completion status
+        if (filters.completion === 'complete' && !task.completed) return false
+        if (filters.completion === 'incomplete' && task.completed) return false
+
+        // Check priorities
+        if (filters.priorities.length > 0) {
+          if (filters.priorities.includes(null)) {
+            if (task.priority === null) return true
+            return filters.priorities.includes(task.priority)
+          }
+          return task.priority !== null && filters.priorities.includes(task.priority)
+        }
+
         return true
       })
 
@@ -111,7 +125,7 @@ export default function Board({ boardId }: BoardProps) {
         tasks: filteredTasks,
       }
     })
-  }, [board, filter])
+  }, [board, filters])
 
   if (!board) return null
 
@@ -268,7 +282,7 @@ export default function Board({ boardId }: BoardProps) {
     <main className="p-6 flex flex-col h-[calc(100vh-var(--spacing)*14-20px)]">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold">Task Lists</h2>
-        <BoardFilter filter={filter} setFilter={setFilter} isFilterActive={filter !== 'all'} />
+        <BoardFilter filters={filters} setFilters={setFilters} />
       </div>
       <DndContext
         sensors={sensors}
