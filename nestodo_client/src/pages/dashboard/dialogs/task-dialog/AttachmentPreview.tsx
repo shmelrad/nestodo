@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { isImage } from "@/lib/utils"
 import { Attachment } from "@/types/attachment"
 import { attachmentsApi } from "@/lib/api/attachments"
+import { DialogDescription } from "@radix-ui/react-dialog"
 
 interface AttachmentPreviewProps {
     previewAttachment: Attachment | null
@@ -44,6 +45,7 @@ function AttachmentPreview({ previewAttachment, setPreviewAttachment }: Attachme
                 <DialogTitle className="text-center mb-4">
                     {previewAttachment?.originalFileName}
                 </DialogTitle>
+                <DialogDescription/>
                 {previewAttachment && (
                     <div className="max-h-[70vh] overflow-hidden">
                         {isAttachmentImage ? (
