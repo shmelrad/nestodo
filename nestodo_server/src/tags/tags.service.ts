@@ -48,7 +48,7 @@ export class TagsService {
   async createWorkspaceTag(workspaceId: number, tag: string, userId: number) {
     await this.workspaceService.checkWorkspaceAccess(workspaceId, userId)
 
-    await this.prisma.workspaceTag.upsert({
+    return await this.prisma.workspaceTag.upsert({
       where: {
         workspaceId_name: {
           workspaceId,
@@ -79,12 +79,10 @@ export class TagsService {
       throw new NotFoundException(`Tag not found`)
     }
 
-    await this.prisma.workspaceTag.delete({
+    return await this.prisma.workspaceTag.delete({
       where: {
         id: tag.id,
       },
     })
-
-    return { success: true }
   }
 }
