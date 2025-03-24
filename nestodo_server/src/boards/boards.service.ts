@@ -71,6 +71,7 @@ export class BoardsService {
                     id: 'asc',
                   },
                 },
+                attachments: true,
               },
             },
           },

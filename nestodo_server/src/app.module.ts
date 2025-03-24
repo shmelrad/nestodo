@@ -10,13 +10,14 @@ import { BoardsModule } from './boards/boards.module';
 import { TaskListsModule } from './task-lists/task-lists.module';
 import { TasksModule } from './tasks/tasks.module';
 import { SubtasksModule } from './subtasks/subtasks.module';
+import { AttachmentsModule } from './attachments/attachments.module';
 
 @Module({
   imports: [AuthModule, UsersModule, PrismaModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
-    WorkspacesModule, BoardsModule, TaskListsModule, TasksModule, SubtasksModule],
+    WorkspacesModule, BoardsModule, TaskListsModule, TasksModule, SubtasksModule, AttachmentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

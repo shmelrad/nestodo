@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id           Int         @id @default(autoincrement())
   email        String      @unique
@@ -48,10 +46,13 @@ model Subtask {
 }
 
 model Attachment {
-  id       Int    @id @default(autoincrement())
-  fileName String
-  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId   Int
+  id           Int    @id @default(autoincrement())
+  originalFileName String
+  fileName     String
+  contentType  String
+  size         Int
+  task         Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId       Int
 }
 
 model TaskList {
