@@ -1,5 +1,6 @@
 import { Attachment } from "./attachment"
 import { TaskList } from "./taskList"
+import { WorkspaceTag } from "./workspaceTag"
 
 export interface Task {
     id: number
@@ -15,6 +16,7 @@ export interface Task {
     createdAt: string
     updatedAt: string
     position: number
+    tags: WorkspaceTag[]
 }
 
 export enum TaskPriority {

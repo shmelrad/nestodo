@@ -15,6 +15,7 @@ interface UpdateTaskRequestDto {
   priority?: TaskPriority | null
   attachments?: Attachment[]
   duration?: number | null
+  tags?: string[]
 }
 
 interface MoveTaskRequestDto {
