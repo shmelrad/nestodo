@@ -10,3 +10,7 @@ export function displayApiError(toastMessage: string, error: ApiError) {
   toast.error(`${toastMessage}: ${error.message}`)
   console.error(error)
 }
+
+export function isImage(contentType: string) {
+  return contentType.startsWith('image/')
+}

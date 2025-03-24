@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import AttachmentsList from "./AttachmentsList"
 
 interface TaskDialogProps {
     open: boolean
@@ -61,7 +62,7 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
     })
 
     const updatePriorityMutation = useMutation({
-        mutationFn: (priority: TaskPriority | null) => 
+        mutationFn: (priority: TaskPriority | null) =>
             tasksApi.updateTask(task.id, { priority: priority }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["board", boardId] })
@@ -108,7 +109,7 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="min-w-xl max-w-6xl">
+            <DialogContent className="flex flex-col min-w-xl max-w-7xl overflow-y-auto max-h-screen">
                 <DialogHeader>
                     <DialogTitle>
                         <form onSubmit={handleTitleSubmit}>
@@ -124,24 +125,24 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="mb-6">
-                    <h3 className="text-sm font-semibold mb-2">Priority</h3>
-                    <Select value={priority ?? "null"} onValueChange={handlePriorityChange}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="null">No priority</SelectItem>
-                            <SelectItem value={TaskPriority.LOW}>Low</SelectItem>
-                            <SelectItem value={TaskPriority.MEDIUM}>Medium</SelectItem>
-                            <SelectItem value={TaskPriority.HIGH}>High</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+                <div className="flex flex-1 gap-4">
+                    <div className="flex flex-col flex-1 overflow-auto gap-4">
+                        <div>
+                            <h3 className="text-sm font-semibold mb-2">Priority</h3>
+                            <Select value={priority ?? "null"} onValueChange={handlePriorityChange}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select priority" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="null">No priority</SelectItem>
+                                    <SelectItem value={TaskPriority.LOW}>Low</SelectItem>
+                                    <SelectItem value={TaskPriority.MEDIUM}>Medium</SelectItem>
+                                    <SelectItem value={TaskPriority.HIGH}>High</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                <div className="flex gap-8">
-                    <div className="flex-1 rounded-md">
-                        <div className="mb-6">
+                        <div className="flex-1 rounded-md">
                             <h3 className="text-sm font-semibold mb-2">Description</h3>
                             <Textarea
                                 className="p-3 resize-none"
@@ -153,7 +154,9 @@ export default function TaskDialog({ open, onOpenChange, task, boardId }: TaskDi
                             />
                         </div>
                         <SubtasksList subtasks={task.subtasks} taskId={task.id} boardId={boardId} />
+                        <AttachmentsList attachments={task.attachments} taskId={task.id} boardId={boardId} />
                     </div>
+
                     <div className="flex flex-col gap-1">
                         <h3 className="text-sm font-semibold">Actions</h3>
                         <Button

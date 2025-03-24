@@ -20,35 +20,44 @@ interface RequestConfig extends RequestInit {
         : `${window.location.protocol}//${window.location.host}${path}`
     }
   
-    protected async request<T>(
-      endpoint: string,
-      { auth = false, params, ...config }: RequestConfig = {}
-    ): Promise<T> {
+    private async fetchWithConfig(
+      endpoint: string, 
+      config: RequestConfig = {}
+    ): Promise<Response> {
       const url = new URL(`${this.baseUrl}${endpoint}`)
-      if (params) {
-        Object.entries(params).forEach(([key, value]) => 
+      if (config.params) {
+        Object.entries(config.params).forEach(([key, value]) => 
           url.searchParams.append(key, value.toString())
         )
       }
   
       const headers: HeadersInit = {
-        ...(auth && { Authorization: `Bearer ${localStorage.getItem('token')}` }),
+        ...(config.auth && { Authorization: `Bearer ${localStorage.getItem('token')}` }),
         ...config.headers,
       }
   
       const response = await fetch(url, { ...config, headers })
-      const text = await response.text()
-      const data = text ? JSON.parse(text) : undefined
       
       if (response.status === 401) {
         useAuthStore.getState().logout()
         window.location.href = '/login'
       }
-
+  
+      return response
+    }
+  
+    protected async request<T>(
+      endpoint: string,
+      config: RequestConfig = {}
+    ): Promise<T> {
+      const response = await this.fetchWithConfig(endpoint, config)
+      const text = await response.text()
+      const data = text ? JSON.parse(text) : undefined
+      
       if (!response.ok) {
         throw { error: data?.error || 'Unknown error occurred', code: response.status, message: data?.message || 'Unknown error occurred' }
       }
-  
+      
       return data
     }
   
@@ -84,5 +93,17 @@ interface RequestConfig extends RequestInit {
         method: 'POST',
         body: data,
       })
+    }
+
+    protected async getFileBlob(endpoint: string, config?: RequestConfig): Promise<Blob> {
+      const response = await this.fetchWithConfig(endpoint, config)
+      
+      if (!response.ok) {
+        const text = await response.text()
+        const data = text ? JSON.parse(text) : undefined
+        throw { error: data?.error || 'Unknown error occurred', code: response.status, message: data?.message || 'Unknown error occurred' }
+      }
+      
+      return await response.blob()
     }
   }

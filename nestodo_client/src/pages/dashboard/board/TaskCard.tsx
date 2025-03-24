@@ -2,7 +2,7 @@ import { Subtask, Task, TaskPriority } from "@/types/task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
-import TaskDialog from "@/pages/dashboard/dialogs/TaskDialog";
+import TaskDialog from "@/pages/dashboard/dialogs/task-dialog/TaskDialog";
 import { Circle, CircleCheck, ChevronDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDndContext } from "@dnd-kit/core";
