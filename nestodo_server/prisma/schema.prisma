@@ -30,6 +30,7 @@ model Task {
   completed   Boolean       @default(false)
   position    Int           @default(0)
   duration    Int?          // Store in minutes
+  tags        String[]
   attachments Attachment[]
   subtasks    Subtask[]
   taskList    TaskList      @relation(fields: [taskListId], references: [id], onDelete: Cascade)
@@ -76,11 +77,23 @@ model Board {
 }
 
 model Workspace {
-  id        Int      @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   title     String
-  boards    Board[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boards    Board[]
+  tags      WorkspaceTag[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model WorkspaceTag {
+  id          Int       @id @default(autoincrement())
+  name        String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([workspaceId, name])
 }
