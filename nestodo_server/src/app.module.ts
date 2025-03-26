@@ -12,6 +12,7 @@ import { TasksModule } from './tasks/tasks.module'
 import { SubtasksModule } from './subtasks/subtasks.module'
 import { AttachmentsModule } from './attachments/attachments.module'
 import { TagsModule } from './tags/tags.module'
+import { RedisModule } from './redis/redis.module'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TagsModule } from './tags/tags.module'
     SubtasksModule,
     AttachmentsModule,
     TagsModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],

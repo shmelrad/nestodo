@@ -9,7 +9,7 @@ class AttachmentsApi extends BaseApi {
   async uploadFile(file: File, taskId: number): Promise<Attachment> {
     const formData = new FormData()
     formData.append('file', file)
-    console.log(formData)
+    
     return this.postFile<Attachment>(`/upload/${taskId}`, formData, {
       auth: true,
     })

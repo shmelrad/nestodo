@@ -1,3 +1,5 @@
+import { TokensPair } from "../auth.interface";
+
 export interface RegisterResponseDTO {
-  access_token: string
+  accessToken: string
 }

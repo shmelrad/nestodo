@@ -2,10 +2,25 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+import * as cookieParser from 'cookie-parser'
+import * as fs from 'fs'
 
-  app.enableCors()
+async function bootstrap() {
+  const httpsOptions = {
+    key: fs.readFileSync('./src/cert/key.pem'),
+    cert: fs.readFileSync('./src/cert/cert.pem'),
+  };
+
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+  })
+
+  app.use(cookieParser())
+  app.enableCors({
+    origin: 'https://localhost:5173',
+    credentials: true,
+  })
+  
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe())
   const config = new DocumentBuilder()

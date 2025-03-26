@@ -1,6 +1,6 @@
 import { JwtUser } from '@/types/jwtUser'
 import { BaseApi } from './base'
-
+import { AUTH_PATH } from './constants'
 interface LoginRequestDto {
   username: string
   password: string
@@ -13,12 +13,12 @@ interface RegisterRequestDto {
 }
 
 export interface LoginResponse {
-  access_token: string
+  accessToken: string
 }
 
 class AuthApi extends BaseApi {
   constructor() {
-    super('/api/auth')
+    super(AUTH_PATH)
   }
 
   login(data: LoginRequestDto): Promise<LoginResponse> {
@@ -31,6 +31,10 @@ class AuthApi extends BaseApi {
 
   getProfile(): Promise<JwtUser> {
     return this.get<JwtUser>('/profile', { auth: true })
+  }
+
+  logout(): Promise<{ message: string }> {
+    return this.post<{ message: string }>('/logout')
   }
 }
 

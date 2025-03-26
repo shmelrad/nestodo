@@ -49,8 +49,8 @@ export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginSchema) => authApi.login(data),
-    onSuccess: ({ access_token }: LoginResponse) => {
-      login(access_token)
+    onSuccess: ({ accessToken }: LoginResponse) => {
+      login(accessToken)
       navigate('/')
       toast.success('Logged in successfully')
     },

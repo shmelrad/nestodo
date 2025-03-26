@@ -58,5 +58,7 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /uploads
+/src/cert
 
 yarn.lock
+
